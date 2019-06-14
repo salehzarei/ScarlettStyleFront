@@ -38,7 +38,7 @@ class MainModel extends Model {
     isLoadingCategories = true;
     notifyListeners();
     final response =
-        await http.get('https://mashhadsafari.com/tmp/getcategories.php');
+        await http.get('https://shifon.ir/tmp/getcategories.php');
     List<dynamic> data = json.decode(response.body);
     CategoriesModel categories = CategoriesModel();
     data.forEach((dynamic catdata) {
@@ -68,7 +68,7 @@ class MainModel extends Model {
     isLoadingAllProduct = true;
     notifyListeners();
     final response =
-        await http.get('https://mashhadsafari.com/tmp/getproducts.php');
+        await http.get('https://shifon.ir/tmp/getproducts.php');
     List<dynamic> data = json.decode(response.body);
     ProductModel products = ProductModel();
     data.forEach((dynamic protdata) {
@@ -100,7 +100,7 @@ class MainModel extends Model {
     isLoadingSelectedProduct = true;
     notifyListeners();
     final response =
-        await http.get('https://mashhadsafari.com/tmp/getproducts.php');
+        await http.get('https://shifon.ir/tmp/getproducts.php');
     List<dynamic> data = json.decode(response.body);
     ProductModel products = ProductModel();
     data.forEach((dynamic protdata) {
@@ -137,7 +137,7 @@ class MainModel extends Model {
       var stream =
           http.ByteStream(DelegatingStream.typed(newCategoriImage.openRead()));
       var length = await newCategoriImage.length();
-      var url = Uri.parse("https://mashhadsafari.com/tmp/addcategory.php");
+      var url = Uri.parse("https:/shifon.ir/tmp/addcategory.php");
       var request = http.MultipartRequest("POST", url);
       var multipartFile = http.MultipartFile("categorie_icon", stream, length,
           filename: basename(newCategoriImage.path));
@@ -157,7 +157,7 @@ class MainModel extends Model {
     }
     // if categori has not Icon file . send empty image to data base
     else {
-      var url = Uri.parse("https://mashhadsafari.com/tmp/addcategory.php");
+      var url = Uri.parse("https://shifon.ir/tmp/addcategory.php");
       var request = http.MultipartRequest("POST", url);
       request.fields['categoie_name'] = newCategorie.categoie_name;
       request.fields['categorie_des'] = newCategorie.categorie_des;
@@ -189,7 +189,7 @@ class MainModel extends Model {
       var stream =
           http.ByteStream(DelegatingStream.typed(newCategoriImage.openRead()));
       var length = await newCategoriImage.length();
-      var url = Uri.parse("https://mashhadsafari.com/tmp/editcategory.php");
+      var url = Uri.parse("https://shifon.ir/tmp/editcategory.php");
       var request = http.MultipartRequest("POST", url);
       var multipartFile = http.MultipartFile("categorie_icon", stream, length,
           filename: basename(newCategoriImage.path));
@@ -210,7 +210,7 @@ class MainModel extends Model {
       });
     } else {
       ///
-      var url = Uri.parse("https://mashhadsafari.com/tmp/editcategory.php");
+      var url = Uri.parse("https://shifon.ir/tmp/editcategory.php");
       var request = http.MultipartRequest("POST", url);
       request.fields['categorie_id'] = newCategorie.categorie_id;
       request.fields['categoie_name'] = newCategorie.categoie_name;
@@ -238,7 +238,7 @@ class MainModel extends Model {
     datadeleted = false;
 
     var response = await http.post(
-        "https://mashhadsafari.com/tmp/deletecategory.php",
+        "https://shifon.ir/tmp/deletecategory.php",
         body: {'categorie_id': id, 'categorie_icon': icon});
     if (response.statusCode == 200) {
       datadeleted = true;
