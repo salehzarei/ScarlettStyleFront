@@ -4,15 +4,17 @@ import '../scoped/mainscoped.dart';
 import './basketiconcount.dart';
 
 class BTNMenu extends StatefulWidget {
-  final Widget child;
+  //final VoidCallback pageindex;
 
-  BTNMenu({Key key, this.child}) : super(key: key);
+ // BTNMenu({Key key, this.pageindex}) : super(key: key);
 
   _BTNMenuState createState() => _BTNMenuState();
 }
 
 class _BTNMenuState extends State<BTNMenu> {
   int _selectedIndex = 1;
+  Color _selectedcolor = Colors.pink;
+  Color _color = Colors.grey.shade400;
   // final _widgetOption = [
   //   Text('index 0: Home'),
   //   Text('index 1: Home'),
@@ -25,34 +27,63 @@ class _BTNMenuState extends State<BTNMenu> {
     return ScopedModelDescendant<MainModel>(
       builder: (context, child, model) {
         return BottomNavigationBar(
+          backgroundColor: Colors.white54.withOpacity(0.8),
+          elevation: 0.0,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.grid_on,
-                color: Colors.grey.shade400,
+              icon: Icon(Icons.grid_on,
+                  color: _selectedIndex == 0 ? _selectedcolor : _color),
+              title: Text(
+                'نمیدونم',
+                style: TextStyle(
+                    fontSize: 10,
+                    color: _selectedIndex == 0 ? _selectedcolor : _color),
               ),
-              title: Text('_'),
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.access_alarms, color: Colors.grey.shade400),
-                title: Text('_')),
+                icon: Icon(Icons.add_box,
+                    color: _selectedIndex == 1 ? _selectedcolor : _color),
+                title: Text(
+                  'افزودن محصول جدید',
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: _selectedIndex == 1 ? _selectedcolor : _color),
+                )),
             BottomNavigationBarItem(
-                icon: Icon(Icons.search, color: Colors.grey.shade400),
-                title: Text('_')),
+                icon: Icon(Icons.search,
+                    color: _selectedIndex == 2 ? _selectedcolor : _color),
+                title: Text(
+                  'نمیدونم',
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: _selectedIndex == 2 ? _selectedcolor : _color),
+                )),
             BottomNavigationBarItem(
-                icon: Icon(Icons.favorite_border, color: Colors.grey.shade400),
-                title: Text('_')),
+                icon: Icon(Icons.favorite_border,
+                    color: _selectedIndex == 3 ? _selectedcolor : _color),
+                title: Text(
+                  'نمیدونم',
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: _selectedIndex == 3 ? _selectedcolor : _color),
+                )),
             BottomNavigationBarItem(
                 //  icon: Icon(Icons.person_outline, color: Colors.grey.shade400),
-                icon: BasketCounter(itemcount: model.productcart.length),
+                icon: BasketCounter(
+                  itemcount: model.productcart.length,
+                  colors: _selectedIndex == 4 ? _selectedcolor : _color,
+                ),
                 title: Text(
                   'سبدخرید',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: _selectedIndex == 4 ? _selectedcolor : _color),
                 )),
           ],
           currentIndex: _selectedIndex,
-          fixedColor: Colors.indigo,
+          fixedColor: Colors.grey,
           onTap: (int index) {
+          //  widget.pageindex();
             setState(() {
               _selectedIndex = index;
             });

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scoped_model/scoped_model.dart';
 import './scoped/mainscoped.dart';
-import './home.dart';
+import './splashScreen.dart';
 import './collection.dart';
 import './productdetiles.dart';
 import './basket.dart';
@@ -13,7 +13,6 @@ void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     MainModel model = MainModel();
-    model.fetchProducts();
     runApp(
       ScopedModel<MainModel>(
           model: model,
@@ -31,9 +30,7 @@ void main() {
             ),
             initialRoute: '/',
             routes: <String, WidgetBuilder>{
-              '/': (context) => Home(
-                    model: model,
-                  ),
+              '/': (context) => Splash(),
               '/collection': (context) => Collection(),
               '/productdetiles': (context) => ProductDetiles(),
               '/basket': (context) => Basket(model: model),

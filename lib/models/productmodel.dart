@@ -23,4 +23,5 @@ class ProductModel {
       this.product_count,
       this.product_price_buy,
       this.product_price_sell});
+
 }

@@ -31,8 +31,8 @@ class MainModel extends Model {
   String currentSelectedCatID;
   File cateImageFile;
 
+//---fetch All Categories From server---//
   Future fetchCategories() async {
-    print("Fetch Categories");
     categoriData.clear();
     categoriList.clear();
     isLoadingCategories = true;
@@ -44,26 +44,23 @@ class MainModel extends Model {
     data.forEach((dynamic catdata) {
       categories = CategoriesModel(
           categorie_id: catdata['categorie_id'].toString(),
-          categoie_name: catdata['categorie_name'].toString(),
+          categorie_name: catdata['categorie_name'].toString(),
           categorie_des: catdata['categorie_des'].toString(),
           categorie_icon: catdata['categorie_icon'].toString(),
           categorie_state: catdata['categorie_state'].toString());
 
       // اصافه کردن لیست دسته بندی برای دراپ داون
-      categoriList.addAll({categories.categorie_id : categories.categoie_name });
+      categoriList.addAll({categories.categorie_id : categories.categorie_name });
       categoriData.add(categories);
       notifyListeners();
     });
-    // print("cat ${categoriData.toString()}");
-    // print("listcat ${categoriList.toString()}");
     isLoadingCategories = false;
     notifyListeners();
     return categoriData;
   }
 
-////////////////////////
+//---fetch All Products From server---//
   Future fetchProducts() async {
-    print("fetchAllPro");
     productData.clear();
     isLoadingAllProduct = true;
     notifyListeners();
@@ -142,12 +139,11 @@ class MainModel extends Model {
       var multipartFile = http.MultipartFile("categorie_icon", stream, length,
           filename: basename(newCategoriImage.path));
       request.files.add(multipartFile);
-      request.fields['categoie_name'] = newCategorie.categoie_name;
+      request.fields['categoie_name'] = newCategorie.categorie_name;
       request.fields['categorie_des'] = newCategorie.categorie_des;
       request.fields['categorie_state'] = newCategorie.categorie_state;
       await request.send().then((resopnse) {
         if (resopnse.statusCode == 200) {
-          print("Upload Data Ok");
           dataAdded = true;
           notifyListeners();
         } else {
@@ -159,7 +155,7 @@ class MainModel extends Model {
     else {
       var url = Uri.parse("https://shifon.ir/tmp/addcategory.php");
       var request = http.MultipartRequest("POST", url);
-      request.fields['categoie_name'] = newCategorie.categoie_name;
+      request.fields['categoie_name'] = newCategorie.categorie_name;
       request.fields['categorie_des'] = newCategorie.categorie_des;
       request.fields['categorie_icon'] = "noimage.png";
       request.fields['categorie_state'] = newCategorie.categorie_state;
@@ -179,7 +175,7 @@ class MainModel extends Model {
   Future updateCategories(
       CategoriesModel newCategorie, File newCategoriImage) async {
         print(newCategorie.categorie_id);
-        print(newCategorie.categoie_name);
+        print(newCategorie.categorie_name);
         print(newCategorie.categorie_des);
         print(newCategorie.categorie_state);
         print(newCategorie.categorie_icon);
@@ -195,7 +191,7 @@ class MainModel extends Model {
           filename: basename(newCategoriImage.path));
       request.files.add(multipartFile);
       request.fields['categorie_id'] = newCategorie.categorie_id;
-      request.fields['categoie_name'] = newCategorie.categoie_name;
+      request.fields['categoie_name'] = newCategorie.categorie_name;
       request.fields['categorie_des'] = newCategorie.categorie_des;
       request.fields['categorie_state'] = newCategorie.categorie_state;
    
@@ -213,7 +209,7 @@ class MainModel extends Model {
       var url = Uri.parse("https://shifon.ir/tmp/editcategory.php");
       var request = http.MultipartRequest("POST", url);
       request.fields['categorie_id'] = newCategorie.categorie_id;
-      request.fields['categoie_name'] = newCategorie.categoie_name;
+      request.fields['categoie_name'] = newCategorie.categorie_name;
       request.fields['categorie_des'] = newCategorie.categorie_des;
       request.fields['categorie_icon'] = newCategorie.categorie_icon;
       request.fields['categorie_state'] = newCategorie.categorie_state;

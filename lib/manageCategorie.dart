@@ -33,7 +33,7 @@ class _ManageCategoriesState extends State<ManageCategories> {
     bool _deletesate = false;
 
     if (catemodel != null) {
-      _catgoreiname.text = catemodel.categoie_name;
+      _catgoreiname.text = catemodel.categorie_name;
       _catgoreides.text = catemodel.categorie_des;
       _deletesate = true;
     }
@@ -105,7 +105,7 @@ class _ManageCategoriesState extends State<ManageCategories> {
                                   onPressed: () {
                                     if (_catgoreiname.text.isNotEmpty) {
                                       CategoriesModel newcat = CategoriesModel(
-                                        categoie_name: _catgoreiname.text,
+                                        categorie_name: _catgoreiname.text,
                                         categorie_des: _catgoreides.text,
                                         categorie_state: 'true',
                                       );
@@ -121,7 +121,7 @@ class _ManageCategoriesState extends State<ManageCategories> {
                                         CategoriesModel editcat =
                                             CategoriesModel(
                                           categorie_id: catemodel.categorie_id,
-                                          categoie_name: _catgoreiname.text,
+                                          categorie_name: _catgoreiname.text,
                                           categorie_des: _catgoreides.text,
                                           categorie_icon: catemodel.categorie_icon,
                                           categorie_state: 'true',
@@ -252,7 +252,7 @@ class _ManageCategoriesState extends State<ManageCategories> {
                 borderRadius: BorderRadius.circular(10), color: Colors.white30),
             child: ListTile(
               dense: true,
-              title: Text(model.categoriData[index].categoie_name,
+              title: Text(model.categoriData[index].categorie_name,
                   style: Theme.of(context).textTheme.headline),
               subtitle: Padding(
                 padding: const EdgeInsets.only(top: 5),

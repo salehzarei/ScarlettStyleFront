@@ -13,7 +13,7 @@ class BasketCounter extends StatelessWidget {
       children: <Widget>[
         Icon(
           Icons.shopping_basket,
-          color: colors == null ? Colors.grey.shade700 : Colors.white,
+          color: colors == null ? Colors.grey.shade700 : colors,
         ),
         Positioned(
             bottom: 15,
