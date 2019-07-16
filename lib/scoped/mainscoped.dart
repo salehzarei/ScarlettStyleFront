@@ -44,7 +44,7 @@ class MainModel extends Model {
     data.forEach((dynamic catdata) {
       categories = CategoriesModel(
           categorie_id: catdata['categorie_id'].toString(),
-          categoie_name: catdata['categoie_name'].toString(),
+          categoie_name: catdata['categorie_name'].toString(),
           categorie_des: catdata['categorie_des'].toString(),
           categorie_icon: catdata['categorie_icon'].toString(),
           categorie_state: catdata['categorie_state'].toString());
