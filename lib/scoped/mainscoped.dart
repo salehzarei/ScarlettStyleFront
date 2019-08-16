@@ -252,7 +252,7 @@ class MainModel extends Model {
     int rand = Math.Random().nextInt(10000);
     if (imageFile != null) {
       Img.Image image = Img.decodeImage(imageFile.readAsBytesSync());
-      Img.Image smallerImg = Img.copyResize(image, 500);
+      Img.Image smallerImg = Img.copyResize(image, width: 500);
       var compressImg = File("$path/categorie_image_$rand.jpg")
         ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 95));
       cateImageFile = compressImg;

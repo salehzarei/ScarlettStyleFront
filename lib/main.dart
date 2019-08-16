@@ -8,6 +8,7 @@ import './productdetiles.dart';
 import './basket.dart';
 import './manageCategorie.dart';
 import './manageProducts.dart';
+import 'barcode.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
@@ -35,7 +36,8 @@ void main() {
               '/productdetiles': (context) => ProductDetiles(),
               '/basket': (context) => Basket(model: model),
               '/managecategories': (context) => ManageCategories(model: model),
-              '/manageproducts': (context) => ManageProduct()
+              '/manageproducts': (context) => ManageProduct(),
+              '/scan':(context)=>BarcodeScan()
             },
           )),
     );
