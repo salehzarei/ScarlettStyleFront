@@ -86,6 +86,7 @@ class _BTNMenuState extends State<BTNMenu> {
           //  widget.pageindex();
             setState(() {
               _selectedIndex = index;
+              Navigator.pushNamed(context, '/scan');
             });
           },
         );

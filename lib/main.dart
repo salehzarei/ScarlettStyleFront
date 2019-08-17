@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scarlettstayle/products/addnewProducts.dart';
 import 'package:scoped_model/scoped_model.dart';
 import './scoped/mainscoped.dart';
 import './splashScreen.dart';
@@ -37,7 +38,8 @@ void main() {
               '/basket': (context) => Basket(model: model),
               '/managecategories': (context) => ManageCategories(model: model),
               '/manageproducts': (context) => ManageProduct(),
-              '/scan':(context)=>BarcodeScan()
+              '/scan':(context)=>BarcodeScan(),
+              '/addnewProduct' :(context)=>ADDProduct()
             },
           )),
     );

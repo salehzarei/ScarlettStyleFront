@@ -198,9 +198,7 @@ class _BackPanelState extends State<BackPanel> {
           ),
            RaisedButton(
             child: Text('اضافه کردن محصول '),
-            onPressed: () {
-              
-            },
+            onPressed: ()=>Navigator.pushNamed(context, '/addnewProduct')
           )
                 ],
               )),
