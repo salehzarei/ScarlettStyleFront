@@ -28,6 +28,14 @@ class _AddNewProductState extends State<AddNewProduct> {
     );
   }
 
+  final FocusNode _productNameFocus = FocusNode();
+  final FocusNode _productBuyPriceFocus = FocusNode(); 
+  final FocusNode _productSalePriceFocus = FocusNode(); 
+  final FocusNode _productCountFocus = FocusNode(); 
+  final FocusNode _productSizeFocus = FocusNode();  
+  final FocusNode _productDesFocus = FocusNode();  
+
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -73,7 +81,12 @@ class _AddNewProductState extends State<AddNewProduct> {
                               child: TextFormField(
                                 style: fildInputText,
                                 decoration: fildInputForm,
+                                autofocus: true,
                                 maxLength: 10,
+                                onFieldSubmitted: (f){
+                                  FocusScope.of(context).requestFocus(_productNameFocus);
+                                },
+                                textInputAction: TextInputAction.next,
                                 keyboardType: TextInputType.number,
                               ),
                             ),
@@ -116,8 +129,10 @@ class _AddNewProductState extends State<AddNewProduct> {
                               width: 180.0,
                               child: TextFormField(
                                 style: fildInputText,
+                                focusNode: _productNameFocus,
                                 decoration: fildInputForm,
                                 maxLength: 28,
+                                textInputAction: TextInputAction.next,
                                 keyboardType: TextInputType.text,
                               ),
                             ),
@@ -187,7 +202,12 @@ class _AddNewProductState extends State<AddNewProduct> {
                               child: TextFormField(
                                 style: fildInputText,
                                 decoration: fildInputForm,
+                                focusNode: _productBuyPriceFocus,
                                 maxLength: 28,
+                                textInputAction: TextInputAction.next,
+                                onFieldSubmitted: (f){
+                                  FocusScope.of(context).requestFocus(_productSalePriceFocus);
+                                },
                                 keyboardType: TextInputType.number,
                               ),
                             ),
@@ -222,8 +242,13 @@ class _AddNewProductState extends State<AddNewProduct> {
                               child: TextFormField(
                                 style: fildInputText,
                                 decoration: fildInputForm,
+                                focusNode: _productSalePriceFocus,
                                 maxLength: 28,
                                 keyboardType: TextInputType.number,
+                                textInputAction: TextInputAction.next,
+                                onFieldSubmitted: (f){
+                                  FocusScope.of(context).requestFocus(_productCountFocus);
+                                },
                               ),
                             ),
                           ],
@@ -233,46 +258,146 @@ class _AddNewProductState extends State<AddNewProduct> {
                   ],
                 ),
               ),
-               ///// قیمت فروش
+              ///// قیمت فروش
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 3),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 5),
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: <Widget>[
+                                  fildTitles('موجودی'),
+                                  divider(),
+                                  SizedBox(
+                                    width: 40.0,
+                                    child: TextFormField(
+                                      style: fildInputText,
+                                      decoration: fildInputForm,
+                                      focusNode: _productCountFocus,
+                                      maxLength: 2,
+                                      keyboardType: TextInputType.number,
+                                      textInputAction: TextInputAction.next,
+                                onFieldSubmitted: (f){
+                                  FocusScope.of(context).requestFocus(_productSizeFocus);
+                                },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 3),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 5),
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: <Widget>[
+                                  fildTitles('سایزبندی'),
+                                  divider(),
+                                  SizedBox(
+                                    width: 40.0,
+                                    child: TextFormField(
+                                      style: fildInputText,
+                                      decoration: fildInputForm,
+                                      focusNode: _productSizeFocus,
+                                      maxLength: 2,
+                                      keyboardType: TextInputType.number,
+                                      textInputAction: TextInputAction.next,
+                                onFieldSubmitted: (f){
+                                  FocusScope.of(context).requestFocus(_productDesFocus);
+                                },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 3),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 5),
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: <Widget>[
+                                  SizedBox(
+                                    width: 50.0,
+                                    child: IconButton(
+                                      icon: Icon(Icons.photo_camera),
+                                      iconSize: 30,
+                                      color: Colors.grey.shade500,
+                                      onPressed: () {},
+                                    ),
+                                  ),
+                                  divider(),
+                                  SizedBox(
+                                    width: 50.0,
+                                    child: IconButton(
+                                      icon: Icon(Icons.photo_library),
+                                      iconSize: 30,
+                                      color: Colors.grey.shade500,
+                                      onPressed: () {},
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 3),
+                    width: 145,
+                    height: 175,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage('images/noimage.png'), fit: BoxFit.cover),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                ],
+              ),
+              ///// قیمت خرید
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 child: Row(
                   children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Row(
-                  children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: <Widget>[
-                          fildTitles('موجودی'),
-                          divider(),
-                          SizedBox(
-                            width: 40.0,
-                            child: TextFormField(
-                              style: fildInputText,
-                              decoration: fildInputForm,
-                              maxLength: 2,
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                 Padding(
-                   padding: const EdgeInsets.symmetric(vertical: 6),
-                   child: Row(
-                    children: <Widget>[
-                      Container(
+                    Expanded(
+                      flex: 6,
+                      child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(15),
@@ -282,28 +407,42 @@ class _AddNewProductState extends State<AddNewProduct> {
                         child: Wrap(
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: <Widget>[
-                            fildTitles('سایزبندی'),
+                            fildTitles('توضیحات'),
                             divider(),
                             SizedBox(
-                              width: 40.0,
+                              width: 180.0,
                               child: TextFormField(
                                 style: fildInputText,
                                 decoration: fildInputForm,
-                                maxLength: 2,
-                                keyboardType: TextInputType.number,
+                                maxLength: 30,
+                                keyboardType: TextInputType.text,
+                                focusNode: _productDesFocus,
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                ),
-                 ),
-                    ],
-                  ),
+                    ),
                   ],
                 ),
               ),
+              Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 18,
+                    horizontal: 60,
+                  ),
+                  child: Container(
+                    height: 40,
+                    child: RaisedButton(
+                      onPressed: () {},
+                      child: Text(
+                        'ثبت محصول',
+                        style: buttonText,
+                      ),
+                      color: Colors.pinkAccent,
+                      shape: StadiumBorder(),
+                    ),
+                  ))
             ],
           ),
         ),
