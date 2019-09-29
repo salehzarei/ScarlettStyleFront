@@ -13,12 +13,11 @@ import '../models/categoriesmodel.dart';
 import '../models/productmodel.dart';
 
 class MainModel extends Model {
-  
   List<CategoriesModel> categoriData = [];
   List<ProductModel> selectedProductData = [];
   List<ProductModel> productData = [];
   Map<int, ProductModel> productcart = {};
-  Map<String,String> categoriList = {};
+  Map<String, String> categoriList = {};
 
   bool isLoadingCategories = true;
   bool isLoadingProductData = true;
@@ -34,26 +33,12 @@ class MainModel extends Model {
 //---fetch All Categories From server---//
   Future fetchCategories() async {
     categoriData.clear();
-    categoriList.clear();
     isLoadingCategories = true;
     notifyListeners();
-    final response =
-        await http.get('https://shifon.ir/tmp/getcategories.php');
-    List<dynamic> data = json.decode(response.body);
-    CategoriesModel categories = CategoriesModel();
-    data.forEach((dynamic catdata) {
-      categories = CategoriesModel(
-          categorie_id: catdata['categorie_id'].toString(),
-          categorie_name: catdata['categorie_name'].toString(),
-          categorie_des: catdata['categorie_des'].toString(),
-          categorie_icon: catdata['categorie_icon'].toString(),
-          categorie_state: catdata['categorie_state'].toString());
-
-      // اصافه کردن لیست دسته بندی برای دراپ داون
-      categoriList.addAll({categories.categorie_id : categories.categorie_name });
-      categoriData.add(categories);
-      notifyListeners();
-    });
+    final response = await http.get('https://shifon.ir/tmp/getcategories.php');
+    categoriData = (json.decode(response.body) as List)
+        .map((i) => CategoriesModel.catjson(i))
+        .toList();
     isLoadingCategories = false;
     notifyListeners();
     return categoriData;
@@ -64,8 +49,7 @@ class MainModel extends Model {
     productData.clear();
     isLoadingAllProduct = true;
     notifyListeners();
-    final response =
-        await http.get('https://shifon.ir/tmp/getproducts.php');
+    final response = await http.get('https://shifon.ir/tmp/getproducts.php');
     List<dynamic> data = json.decode(response.body);
     ProductModel products = ProductModel();
     data.forEach((dynamic protdata) {
@@ -96,8 +80,7 @@ class MainModel extends Model {
     selectedProductData.clear();
     isLoadingSelectedProduct = true;
     notifyListeners();
-    final response =
-        await http.get('https://shifon.ir/tmp/getproducts.php');
+    final response = await http.get('https://shifon.ir/tmp/getproducts.php');
     List<dynamic> data = json.decode(response.body);
     ProductModel products = ProductModel();
     data.forEach((dynamic protdata) {
@@ -174,14 +157,14 @@ class MainModel extends Model {
 
   Future updateCategories(
       CategoriesModel newCategorie, File newCategoriImage) async {
-        print(newCategorie.categorie_id);
-        print(newCategorie.categorie_name);
-        print(newCategorie.categorie_des);
-        print(newCategorie.categorie_state);
-        print(newCategorie.categorie_icon);
-        print(newCategoriImage);
+    print(newCategorie.categorie_id);
+    print(newCategorie.categorie_name);
+    print(newCategorie.categorie_des);
+    print(newCategorie.categorie_state);
+    print(newCategorie.categorie_icon);
+    print(newCategoriImage);
     dataupdated = false;
-     if (newCategoriImage != null) {
+    if (newCategoriImage != null) {
       var stream =
           http.ByteStream(DelegatingStream.typed(newCategoriImage.openRead()));
       var length = await newCategoriImage.length();
@@ -194,7 +177,7 @@ class MainModel extends Model {
       request.fields['categoie_name'] = newCategorie.categorie_name;
       request.fields['categorie_des'] = newCategorie.categorie_des;
       request.fields['categorie_state'] = newCategorie.categorie_state;
-   
+
       await request.send().then((resopnse) {
         if (resopnse.statusCode == 200) {
           print("Edit Data Ok");
@@ -222,10 +205,7 @@ class MainModel extends Model {
           print("Error to Edit Data:${resopnse.statusCode} ");
         }
       });
-
-    
-
-   }
+    }
     return dataupdated;
   }
 
@@ -233,8 +213,7 @@ class MainModel extends Model {
   Future deleteCategories(String id, String icon) async {
     datadeleted = false;
 
-    var response = await http.post(
-        "https://shifon.ir/tmp/deletecategory.php",
+    var response = await http.post("https://shifon.ir/tmp/deletecategory.php",
         body: {'categorie_id': id, 'categorie_icon': icon});
     if (response.statusCode == 200) {
       datadeleted = true;

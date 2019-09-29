@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scarlettstayle/scoped/mainscoped.dart';
+import 'package:scoped_model/scoped_model.dart';
 import '../theme/textStyle.dart';
 import '../utils/menu.dart';
 
@@ -29,12 +31,32 @@ class _AddNewProductState extends State<AddNewProduct> {
   }
 
   final FocusNode _productNameFocus = FocusNode();
-  final FocusNode _productBuyPriceFocus = FocusNode(); 
-  final FocusNode _productSalePriceFocus = FocusNode(); 
-  final FocusNode _productCountFocus = FocusNode(); 
-  final FocusNode _productSizeFocus = FocusNode();  
-  final FocusNode _productDesFocus = FocusNode();  
+  final FocusNode _productBuyPriceFocus = FocusNode();
+  final FocusNode _productSalePriceFocus = FocusNode();
+  final FocusNode _productCountFocus = FocusNode();
+  final FocusNode _productSizeFocus = FocusNode();
+  final FocusNode _productDesFocus = FocusNode();
 
+  List<DropdownMenuItem> _catListMenu = [];
+  String _catSelectedID;
+
+  @override
+  void initState() {
+    super.initState();
+    MainModel model = ScopedModel.of(context);
+    model.fetchCategories().whenComplete(() {
+      if (model.categoriData.length != 0) {
+        setState(() {
+          _catListMenu = model.categoriData.map((cat) {
+            return DropdownMenuItem(
+              value: cat.categorie_id,
+              child: Text(cat.categorie_name),
+            );
+          }).toList();
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +105,9 @@ class _AddNewProductState extends State<AddNewProduct> {
                                 decoration: fildInputForm,
                                 autofocus: true,
                                 maxLength: 10,
-                                onFieldSubmitted: (f){
-                                  FocusScope.of(context).requestFocus(_productNameFocus);
+                                onFieldSubmitted: (f) {
+                                  FocusScope.of(context)
+                                      .requestFocus(_productNameFocus);
                                 },
                                 textInputAction: TextInputAction.next,
                                 keyboardType: TextInputType.number,
@@ -163,14 +186,27 @@ class _AddNewProductState extends State<AddNewProduct> {
                             fildTitles('دسته بندی'),
                             divider(),
                             SizedBox(
-                              width: 180.0,
-                              child: TextFormField(
-                                style: fildInputText,
-                                decoration: fildInputForm,
-                                maxLength: 28,
-                                keyboardType: TextInputType.text,
-                              ),
-                            ),
+                                width: 180.0,
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton(
+
+                                    items: _catListMenu,
+                                    value: _catSelectedID,
+                                    hint: Text('یک دسته را انتخاب کنید' , textDirection: TextDirection.rtl,),
+                                    onChanged: (newVal) {
+                                      setState(() {
+                                        _catSelectedID = newVal;
+                                      });
+                                    },
+                                  ),
+                                )
+                                // TextFormField(
+                                //   style: fildInputText,
+                                //   decoration: fildInputForm,
+                                //   maxLength: 28,
+                                //   keyboardType: TextInputType.text,
+                                // ),
+                                ),
                           ],
                         ),
                       ),
@@ -205,8 +241,9 @@ class _AddNewProductState extends State<AddNewProduct> {
                                 focusNode: _productBuyPriceFocus,
                                 maxLength: 28,
                                 textInputAction: TextInputAction.next,
-                                onFieldSubmitted: (f){
-                                  FocusScope.of(context).requestFocus(_productSalePriceFocus);
+                                onFieldSubmitted: (f) {
+                                  FocusScope.of(context)
+                                      .requestFocus(_productSalePriceFocus);
                                 },
                                 keyboardType: TextInputType.number,
                               ),
@@ -246,8 +283,9 @@ class _AddNewProductState extends State<AddNewProduct> {
                                 maxLength: 28,
                                 keyboardType: TextInputType.number,
                                 textInputAction: TextInputAction.next,
-                                onFieldSubmitted: (f){
-                                  FocusScope.of(context).requestFocus(_productCountFocus);
+                                onFieldSubmitted: (f) {
+                                  FocusScope.of(context)
+                                      .requestFocus(_productCountFocus);
                                 },
                               ),
                             ),
@@ -289,9 +327,10 @@ class _AddNewProductState extends State<AddNewProduct> {
                                       maxLength: 2,
                                       keyboardType: TextInputType.number,
                                       textInputAction: TextInputAction.next,
-                                onFieldSubmitted: (f){
-                                  FocusScope.of(context).requestFocus(_productSizeFocus);
-                                },
+                                      onFieldSubmitted: (f) {
+                                        FocusScope.of(context)
+                                            .requestFocus(_productSizeFocus);
+                                      },
                                     ),
                                   ),
                                 ],
@@ -325,9 +364,10 @@ class _AddNewProductState extends State<AddNewProduct> {
                                       maxLength: 2,
                                       keyboardType: TextInputType.number,
                                       textInputAction: TextInputAction.next,
-                                onFieldSubmitted: (f){
-                                  FocusScope.of(context).requestFocus(_productDesFocus);
-                                },
+                                      onFieldSubmitted: (f) {
+                                        FocusScope.of(context)
+                                            .requestFocus(_productDesFocus);
+                                      },
                                     ),
                                   ),
                                 ],
@@ -384,7 +424,8 @@ class _AddNewProductState extends State<AddNewProduct> {
                     height: 175,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage('images/noimage.png'), fit: BoxFit.cover),
+                          image: AssetImage('images/noimage.png'),
+                          fit: BoxFit.cover),
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),

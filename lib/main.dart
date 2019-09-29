@@ -34,7 +34,7 @@ void main() {
             initialRoute: '/',
             routes: <String, WidgetBuilder>{
              // '/': (context) => Splash(),
-             '/':(context)=>AddNewProduct(),
+              '/':(context)=>AddNewProduct(),
               '/collection': (context) => Collection(),
               '/productdetiles': (context) => ProductDetiles(),
               '/basket': (context) => Basket(model: model),
