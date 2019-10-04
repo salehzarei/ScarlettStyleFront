@@ -10,7 +10,6 @@ import './productdetiles.dart';
 import './basket.dart';
 import './manageCategorie.dart';
 import './manageProducts.dart';
-import 'barcode.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
@@ -33,15 +32,14 @@ void main() {
             ),
             initialRoute: '/',
             routes: <String, WidgetBuilder>{
-             // '/': (context) => Splash(),
-              '/':(context)=>AddNewProduct(),
+              // '/': (context) => Splash(),
+              '/': (context) => AddNewProduct(),
               '/collection': (context) => Collection(),
               '/productdetiles': (context) => ProductDetiles(),
               '/basket': (context) => Basket(model: model),
               '/managecategories': (context) => ManageCategories(model: model),
               '/manageproducts': (context) => ManageProduct(),
-              '/scan':(context)=>BarcodeScan(),
-              '/addnewProduct' :(context)=>ADDProduct()
+              '/addnewProduct': (context) => ADDProduct()
             },
           )),
     );

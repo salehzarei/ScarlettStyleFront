@@ -1,10 +1,14 @@
 import 'dart:io';
 import 'dart:math' as Math;
+import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:image/image.dart' as Img;
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'dart:convert';
 import 'package:async/async.dart';
 import 'package:path/path.dart';
@@ -18,17 +22,54 @@ class MainModel extends Model {
   List<ProductModel> productData = [];
   Map<int, ProductModel> productcart = {};
   Map<String, String> categoriList = {};
+  String barcode = '';
 
   bool isLoadingCategories = true;
   bool isLoadingProductData = true;
   bool isLoadingAllProduct = true;
   bool isLoadingSelectedProduct = true;
+
   bool dataAdded = true;
   bool datadeleted = false;
   bool dataupdated = false;
 
   String currentSelectedCatID;
   File cateImageFile;
+
+  Future successDialog({context, title, desc}) async {
+    return Alert(
+        context: context,
+        title: title,
+        type: AlertType.success,
+        desc: desc,
+        buttons: [
+          DialogButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "+ محصول جدید",
+              style: TextStyle(color: Colors.white, fontSize: 15),
+            ),
+          ),
+          DialogButton(
+            onPressed: () => Navigator.pop(context),
+            color: Colors.redAccent,
+            child: Text(
+              "لیست محصولات",
+              style: TextStyle(color: Colors.white, fontSize: 15),
+            ),
+          )
+        ]).show();
+  }
+
+//--Scan Barcode --//
+  Future<void> scanBarcode() async {
+    try {
+      barcode = await FlutterBarcodeScanner.scanBarcode(
+          "#ff6666", "بی خیال", true, ScanMode.BARCODE);
+    } on PlatformException {
+      barcode = 'بارکد خوانده نشد';
+    }
+  }
 
 //---fetch All Categories From server---//
   Future fetchCategories() async {
@@ -155,6 +196,15 @@ class MainModel extends Model {
     return dataAdded;
   }
 
+//// Add New Product ////
+
+  Future addNewProduct(ProductModel newProduct) async {
+    print(newProduct.product_name);
+    print(newProduct.product_price_buy);
+    print(newProduct.product_price_sell);
+    print(newProduct.product_image);
+  }
+
   Future updateCategories(
       CategoriesModel newCategorie, File newCategoriImage) async {
     print(newCategorie.categorie_id);
@@ -235,6 +285,24 @@ class MainModel extends Model {
       var compressImg = File("$path/categorie_image_$rand.jpg")
         ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 95));
       cateImageFile = compressImg;
+
+      notifyListeners();
+    }
+  }
+
+  ////// upload picture From Camera to server //////
+  Future getImageCamera() async {
+    var imageFile = await ImagePicker.pickImage(source: ImageSource.camera);
+    final tempDir = await getTemporaryDirectory();
+    final path = tempDir.path;
+    int rand = Math.Random().nextInt(10000);
+    if (imageFile != null) {
+      Img.Image image = Img.decodeImage(imageFile.readAsBytesSync());
+      Img.Image smallerImg = Img.copyResize(image, width: 500);
+      var compressImg = File("$path/categorie_image_$rand.jpg")
+        ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 95));
+      cateImageFile = compressImg;
+
       notifyListeners();
     }
   }
