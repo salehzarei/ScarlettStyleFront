@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:scarlettstayle/models/productmodel.dart';
 import 'package:scarlettstayle/scoped/mainscoped.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -39,19 +40,30 @@ class _AddNewProductState extends State<AddNewProduct> {
   final FocusNode _productSizeFocus = FocusNode();
   final FocusNode _productDesFocus = FocusNode();
 
-  TextEditingController _barcode = TextEditingController()..text = 'بدون کد';
-  TextEditingController _name = TextEditingController();
-  TextEditingController _buyPrice = TextEditingController();
-  TextEditingController _salePrice = TextEditingController();
-  TextEditingController _count = TextEditingController();
-  TextEditingController _size = TextEditingController();
-  TextEditingController _des = TextEditingController();
+  TextEditingController _productCode = TextEditingController();
+
+  String _productName,
+      _productDes,
+      _productBuyPrice,
+      _productSalePrice,
+      _productCount,
+      _productSize;
 
   final _formKey = GlobalKey<FormState>();
-
+  var _productBuyPriceController = MoneyMaskedTextController(
+    precision: 0,
+    thousandSeparator: '.',
+    decimalSeparator: '',
+  );
+  var _productSalePriceController = MoneyMaskedTextController(
+    precision: 0,
+    thousandSeparator: '.',
+    decimalSeparator: '',
+  );
   List<DropdownMenuItem> _catListMenu = [];
   String _catSelectedID;
   bool _loadingImage = false;
+  bool _formError = false;
 
   @override
   void initState() {
@@ -63,7 +75,7 @@ class _AddNewProductState extends State<AddNewProduct> {
           _catListMenu = model.categoriData.map((cat) {
             return DropdownMenuItem(
               value: cat.categorie_id,
-              child: Text(cat.categorie_name),
+              child: Text(cat.categorie_name , style: fildInputText,),
             );
           }).toList();
         });
@@ -91,7 +103,7 @@ class _AddNewProductState extends State<AddNewProduct> {
             ),
             drawer: Menu(),
             body: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Form(
                 key: _formKey,
                 child: ListView(
@@ -119,10 +131,17 @@ class _AddNewProductState extends State<AddNewProduct> {
                                     width: 120.0,
                                     child: TextFormField(
                                       style: fildInputText,
+                                      controller: _productCode,
                                       decoration: fildInputForm,
-                                      controller: _barcode,
+                                      onSaved: (val) => setState(() {
+                                        _productCode.text = val;
+                                      }),
                                       validator: (val) {
-                                        if (val.isEmpty) {}
+                                        if (val.isEmpty) {
+                                          setState(() {
+                                            _formError = true;
+                                          });
+                                        }
                                         return null;
                                       },
                                       autofocus: true,
@@ -148,7 +167,7 @@ class _AddNewProductState extends State<AddNewProduct> {
                               onPressed: () {
                                 model.scanBarcode().whenComplete(() {
                                   setState(() {
-                                    _barcode.text = model.barcode;
+                                    _productCode.text = model.barcode;
                                   });
                                 });
                               },
@@ -182,10 +201,16 @@ class _AddNewProductState extends State<AddNewProduct> {
                                       style: fildInputText,
                                       focusNode: _productNameFocus,
                                       decoration: fildInputForm,
-                                      controller: _name,
                                       maxLength: 28,
+                                      onSaved: (val) => setState(() {
+                                        _productName = val;
+                                      }),
                                       validator: (val) {
-                                        if (val.isEmpty) {}
+                                        if (val.isEmpty) {
+                                          setState(() {
+                                            _formError = true;
+                                          });
+                                        }
                                         return null;
                                       },
                                       textInputAction: TextInputAction.next,
@@ -265,18 +290,27 @@ class _AddNewProductState extends State<AddNewProduct> {
                                     width: 180.0,
                                     child: TextFormField(
                                       style: fildInputText,
-                                      decoration: fildInputForm,
+                                      controller: _productSalePriceController,
+                                      decoration: fildInputForm.copyWith(
+                                        suffixText: 'تومان',
+                                      ),
                                       focusNode: _productBuyPriceFocus,
-                                      controller: _buyPrice,
-                                      maxLength: 28,
+                                      maxLength: 9,
+                                      onSaved: (val) => setState(() {
+                                        _productBuyPrice = val;
+                                      }),
                                       validator: (val) {
-                                        if (val.isEmpty) {}
+                                        if (val.isEmpty) {
+                                          setState(() {
+                                            _formError = true;
+                                          });
+                                        }
                                         return null;
                                       },
                                       textInputAction: TextInputAction.next,
                                       onFieldSubmitted: (f) {
                                         FocusScope.of(context).requestFocus(
-                                            _productSalePriceFocus);
+                                            _productBuyPriceFocus);
                                       },
                                       keyboardType: TextInputType.number,
                                     ),
@@ -311,12 +345,20 @@ class _AddNewProductState extends State<AddNewProduct> {
                                     width: 180.0,
                                     child: TextFormField(
                                       style: fildInputText,
-                                      decoration: fildInputForm,
-                                      controller: _salePrice,
+                                      controller: _productBuyPriceController,
+                                      decoration: fildInputForm.copyWith(
+                                          suffixText: 'تومان'),
                                       focusNode: _productSalePriceFocus,
-                                      maxLength: 28,
+                                      maxLength: 9,
+                                      onSaved: (val) => setState(() {
+                                        _productSalePrice = val;
+                                      }),
                                       validator: (val) {
-                                        if (val.isEmpty) {}
+                                        if (val.isEmpty) {
+                                          setState(() {
+                                            _formError = true;
+                                          });
+                                        }
                                         return null;
                                       },
                                       keyboardType: TextInputType.number,
@@ -363,10 +405,16 @@ class _AddNewProductState extends State<AddNewProduct> {
                                             style: fildInputText,
                                             decoration: fildInputForm,
                                             focusNode: _productCountFocus,
-                                            controller: _count,
                                             maxLength: 2,
+                                            onSaved: (val) => setState(() {
+                                              _productCount = val;
+                                            }),
                                             validator: (val) {
-                                              if (val.isEmpty) {}
+                                              if (val.isEmpty) {
+                                                setState(() {
+                                                  _formError = true;
+                                                });
+                                              }
                                               return null;
                                             },
                                             keyboardType: TextInputType.number,
@@ -408,10 +456,16 @@ class _AddNewProductState extends State<AddNewProduct> {
                                             style: fildInputText,
                                             decoration: fildInputForm,
                                             focusNode: _productSizeFocus,
-                                            controller: _size,
                                             maxLength: 2,
+                                            onSaved: (val) => setState(() {
+                                              _productSize = val;
+                                            }),
                                             validator: (val) {
-                                              if (val.isEmpty) {}
+                                              if (val.isEmpty) {
+                                                setState(() {
+                                                  _formError = true;
+                                                });
+                                              }
                                               return null;
                                             },
                                             keyboardType: TextInputType.number,
@@ -532,8 +586,15 @@ class _AddNewProductState extends State<AddNewProduct> {
                                       style: fildInputText,
                                       decoration: fildInputForm,
                                       maxLength: 30,
+                                      onSaved: (val) => setState(() {
+                                        _productDes = val;
+                                      }),
                                       validator: (val) {
-                                        if (val.isEmpty) {}
+                                        if (val.isEmpty) {
+                                          setState(() {
+                                            _formError = true;
+                                          });
+                                        }
                                         return null;
                                       },
                                       keyboardType: TextInputType.text,
@@ -556,21 +617,32 @@ class _AddNewProductState extends State<AddNewProduct> {
                           height: 40,
                           child: RaisedButton(
                             onPressed: () {
-                              if (_formKey.currentState.validate()) {
-                               //_formKey.currentState.save();
+                              if (_formKey.currentState.validate() &&
+                                  !_formError && model.cateImageFile != null ) {
+                                _formKey.currentState.save();
                                 ProductModel newproduct = ProductModel(
-                                    product_name: _name.text,
-                                    product_price_buy: _buyPrice.text);
+                                  product_barcode: _productCode.text,
+                                  product_name: _productName,
+                                  product_category: _catSelectedID,
+                                  product_count: _productCount,
+                                  product_des: _productDes,
+                                  product_price_sell: _productSalePrice,
+                                  product_price_buy: _productBuyPrice,
+                                  product_size: _productSize,
+                                );
                                 model
                                     .addNewProduct(newproduct)
                                     .whenComplete(() {
                                   model.successDialog(
                                       context: context,
                                       title: 'محصول با موفقیت ذخیره شد',
-                                      desc: ' کد محصول ' + _barcode.text);
+                                      desc: ' کد محصول ' + _productCode.text);
                                 });
                               } else {
-                                print('object');
+                                model.errorDialog(
+                                    context: context,
+                                    title: 'خطا داریم',
+                                    desc: 'لطفا در وارد کردن مقادیر دقت کنید');
                               }
                             },
                             child: Text(

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math' as Math;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:image/image.dart' as Img;
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -36,6 +37,17 @@ class MainModel extends Model {
   String currentSelectedCatID;
   File cateImageFile;
 
+//// fix Price ////
+fixPrice(String price) {
+    return MoneyMaskedTextController(
+            precision: 0,
+            thousandSeparator: '.',
+            decimalSeparator: '',
+            initialValue: double.parse(price))
+        .text;
+  }
+
+
   Future successDialog({context, title, desc}) async {
     return Alert(
         context: context,
@@ -44,7 +56,7 @@ class MainModel extends Model {
         desc: desc,
         buttons: [
           DialogButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pushNamed(context, '/addnewProduct'),
             child: Text(
               "+ محصول جدید",
               style: TextStyle(color: Colors.white, fontSize: 15),
@@ -59,6 +71,25 @@ class MainModel extends Model {
             ),
           )
         ]).show();
+  }
+
+  Future errorDialog({context, title, desc}) async {
+    return Alert(
+      context: context,
+      title: title,
+      type: AlertType.error,
+      desc: desc,
+      buttons: [
+         DialogButton(
+            onPressed: () => Navigator.pop(context),
+            color: Colors.redAccent,
+            child: Text(
+              "بررسی مجدد",
+              style: TextStyle(color: Colors.white, fontSize: 15),
+            ),
+          )
+      ]
+    ).show();
   }
 
 //--Scan Barcode --//
@@ -149,7 +180,7 @@ class MainModel extends Model {
     return productData;
   }
 
-///////////////////////
+///-- Add New Category -- ///
   Future addCategories(
       CategoriesModel newCategorie, File newCategoriImage) async {
     dataAdded = false;
@@ -200,9 +231,14 @@ class MainModel extends Model {
 
   Future addNewProduct(ProductModel newProduct) async {
     print(newProduct.product_name);
+    print(newProduct.product_category);
     print(newProduct.product_price_buy);
     print(newProduct.product_price_sell);
-    print(newProduct.product_image);
+    print(newProduct.product_size);
+    print(basename(cateImageFile.path));
+
+    
+    
   }
 
   Future updateCategories(
