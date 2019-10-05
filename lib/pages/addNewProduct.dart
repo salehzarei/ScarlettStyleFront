@@ -42,12 +42,12 @@ class _AddNewProductState extends State<AddNewProduct> {
 
   TextEditingController _productCode = TextEditingController();
 
-  String _productName,
-      _productDes,
-      _productBuyPrice,
-      _productSalePrice,
-      _productCount,
-      _productSize;
+  String _productName;
+  String _productDes;
+  String _productBuyPrice;
+  String _productSalePrice;
+  String _productCount;
+  String _productSize;
 
   final _formKey = GlobalKey<FormState>();
   var _productBuyPriceController = MoneyMaskedTextController(
@@ -68,6 +68,7 @@ class _AddNewProductState extends State<AddNewProduct> {
   @override
   void initState() {
     super.initState();
+
     MainModel model = ScopedModel.of(context);
     model.fetchCategories().whenComplete(() {
       if (model.categoriData.length != 0) {
@@ -75,7 +76,10 @@ class _AddNewProductState extends State<AddNewProduct> {
           _catListMenu = model.categoriData.map((cat) {
             return DropdownMenuItem(
               value: cat.categorie_id,
-              child: Text(cat.categorie_name , style: fildInputText,),
+              child: Text(
+                cat.categorie_name,
+                style: fildInputText,
+              ),
             );
           }).toList();
         });
@@ -87,6 +91,8 @@ class _AddNewProductState extends State<AddNewProduct> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
       builder: (context, child, model) {
+        print(_productName);
+
         return Directionality(
           textDirection: TextDirection.rtl,
           child: Scaffold(
@@ -146,11 +152,6 @@ class _AddNewProductState extends State<AddNewProduct> {
                                       },
                                       autofocus: true,
                                       maxLength: 10,
-                                      onFieldSubmitted: (f) {
-                                        FocusScope.of(context)
-                                            .requestFocus(_productNameFocus);
-                                      },
-                                      textInputAction: TextInputAction.next,
                                       keyboardType: TextInputType.number,
                                     ),
                                   ),
@@ -166,8 +167,10 @@ class _AddNewProductState extends State<AddNewProduct> {
                               color: Colors.grey.shade500,
                               onPressed: () {
                                 model.scanBarcode().whenComplete(() {
-                                  setState(() {
-                                    _productCode.text = model.barcode;
+                                  model.checkProduct().whenComplete(() {
+                                    setState(() {
+                                      _productCode.text = model.barcode;
+                                    });
                                   });
                                 });
                               },
@@ -213,7 +216,6 @@ class _AddNewProductState extends State<AddNewProduct> {
                                         }
                                         return null;
                                       },
-                                      textInputAction: TextInputAction.next,
                                       keyboardType: TextInputType.text,
                                     ),
                                   ),
@@ -618,7 +620,8 @@ class _AddNewProductState extends State<AddNewProduct> {
                           child: RaisedButton(
                             onPressed: () {
                               if (_formKey.currentState.validate() &&
-                                  !_formError && model.cateImageFile != null ) {
+                                  !_formError &&
+                                  model.cateImageFile != null) {
                                 _formKey.currentState.save();
                                 ProductModel newproduct = ProductModel(
                                   product_barcode: _productCode.text,

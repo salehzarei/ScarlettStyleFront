@@ -38,7 +38,7 @@ class MainModel extends Model {
   File cateImageFile;
 
 //// fix Price ////
-fixPrice(String price) {
+  fixPrice(String price) {
     return MoneyMaskedTextController(
             precision: 0,
             thousandSeparator: '.',
@@ -46,7 +46,6 @@ fixPrice(String price) {
             initialValue: double.parse(price))
         .text;
   }
-
 
   Future successDialog({context, title, desc}) async {
     return Alert(
@@ -75,12 +74,12 @@ fixPrice(String price) {
 
   Future errorDialog({context, title, desc}) async {
     return Alert(
-      context: context,
-      title: title,
-      type: AlertType.error,
-      desc: desc,
-      buttons: [
-         DialogButton(
+        context: context,
+        title: title,
+        type: AlertType.error,
+        desc: desc,
+        buttons: [
+          DialogButton(
             onPressed: () => Navigator.pop(context),
             color: Colors.redAccent,
             child: Text(
@@ -88,8 +87,7 @@ fixPrice(String price) {
               style: TextStyle(color: Colors.white, fontSize: 15),
             ),
           )
-      ]
-    ).show();
+        ]).show();
   }
 
 //--Scan Barcode --//
@@ -130,7 +128,6 @@ fixPrice(String price) {
           product_name: protdata['product_name'],
           product_category: protdata['product_category'],
           product_des: protdata['product_des'],
-          product_color: protdata['product_color'],
           product_size: protdata['product_size'],
           product_barcode: protdata['product_barcode'],
           product_image: protdata['product_image'],
@@ -161,7 +158,6 @@ fixPrice(String price) {
           product_name: protdata['product_name'],
           product_category: protdata['product_category'],
           product_des: protdata['product_des'],
-          product_color: protdata['product_color'],
           product_size: protdata['product_size'],
           product_barcode: protdata['product_barcode'],
           product_image: protdata['product_image'],
@@ -180,7 +176,7 @@ fixPrice(String price) {
     return productData;
   }
 
-///-- Add New Category -- ///
+  ///-- Add New Category -- ///
   Future addCategories(
       CategoriesModel newCategorie, File newCategoriImage) async {
     dataAdded = false;
@@ -228,17 +224,55 @@ fixPrice(String price) {
   }
 
 //// Add New Product ////
-
   Future addNewProduct(ProductModel newProduct) async {
+    print(newProduct.product_barcode);
     print(newProduct.product_name);
     print(newProduct.product_category);
     print(newProduct.product_price_buy);
     print(newProduct.product_price_sell);
+    print(newProduct.product_count);
     print(newProduct.product_size);
+    print(newProduct.product_des);
     print(basename(cateImageFile.path));
+    // if (cateImageFile != null) {
+    //   var stream =
+    //       http.ByteStream(DelegatingStream.typed(cateImageFile.openRead()));
+    //   var length = await cateImageFile.length();
+    //   var url = Uri.parse("https://shifon.ir/tmp/addproducts.php");
+    //   var request = http.MultipartRequest("POST", url);
+    //   var multipartFile = http.MultipartFile("product_image", stream, length,
+    //       filename: basename(cateImageFile.path));
+    //   request.files.add(multipartFile);
+    //   request.fields['product_name'] = newProduct.product_name;
+    //   request.fields['product_category'] = newProduct.product_category;
+    //   request.fields['product_des'] = newProduct.product_des;
+    //   request.fields['product_size'] = newProduct.product_size;
+    //   request.fields['product_barcode'] = newProduct.product_barcode;
+    //   request.fields['product_count'] = newProduct.product_count;
+    //   request.fields['product_price_buy'] = newProduct.product_price_buy;
+    //   request.fields['product_price_sell'] = newProduct.product_price_sell;
+    //   await request.send().then((resopnse) {
+    //     if (resopnse.statusCode == 200) {
+    //       print("Data Send");
+    //       notifyListeners();
+    //     } else {
+    //       print("Error to Upload Data:${resopnse.statusCode} ");
+    //     }
+    //   });
+    // }
+  }
 
-    
-    
+  Future checkProduct() async {
+    var response = await http.post('http://shifon.ir/tmp/checkproduct.php',
+        body: {'product_barcode': barcode});
+    if (response.statusCode == 200 && response.body != '[]') {
+      List<ProductModel> detectedProduct = (json.decode(response.body) as List)
+          .map((i) => ProductModel.proJson(i))
+          .toList();
+
+      print(detectedProduct[0].product_name);
+    }
+    return response;
   }
 
   Future updateCategories(
