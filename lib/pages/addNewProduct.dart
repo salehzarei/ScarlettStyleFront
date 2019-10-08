@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:scarlettstayle/functions/chekProducts.dart';
 import 'package:scarlettstayle/models/productmodel.dart';
 import 'package:scarlettstayle/scoped/mainscoped.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -14,7 +15,6 @@ class AddNewProduct extends StatefulWidget {
 }
 
 class _AddNewProductState extends State<AddNewProduct> {
-
   Widget divider() {
     return Container(
       color: Colors.grey.shade500,
@@ -42,14 +42,13 @@ class _AddNewProductState extends State<AddNewProduct> {
   final FocusNode _productDesFocus = FocusNode();
 
   TextEditingController _productCode = TextEditingController();
-  String _productName;
-  String _productDes;
-  String _productBuyPrice;
-  String _productSalePrice;
-  String _productCount;
-  String _productSize;
+  TextEditingController _productName = TextEditingController();
+  TextEditingController _productBuyPrice = TextEditingController();
+  TextEditingController _productSalePrice = TextEditingController();
+  TextEditingController _productCount = TextEditingController();
+  TextEditingController _productSize = TextEditingController();
+  TextEditingController _productDes = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>();
   var _productBuyPriceController = MoneyMaskedTextController(
     precision: 0,
     thousandSeparator: '.',
@@ -62,9 +61,9 @@ class _AddNewProductState extends State<AddNewProduct> {
   );
   List<DropdownMenuItem> _catListMenu = [];
   String _catSelectedID;
-  bool _loadingImage = false;
-  bool _formError = false;
-  
+  bool _isNoImage = true;
+  bool _imageLoading = false;
+  bool _catLoading = true;
 
   @override
   void initState() {
@@ -83,20 +82,17 @@ class _AddNewProductState extends State<AddNewProduct> {
               ),
             );
           }).toList();
+          _catLoading = false;
         });
       }
     });
-    print(model.productImageFile);
-    if(model.productImageFile == null){
-      print('image is null');
-    } else print("Image not null");
   }
 
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
       builder: (context, child, model) {
-          return Directionality(
+        return Directionality(
           textDirection: TextDirection.rtl,
           child: Scaffold(
             backgroundColor: Colors.grey.shade100,
@@ -113,571 +109,510 @@ class _AddNewProductState extends State<AddNewProduct> {
             drawer: Menu(),
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  children: <Widget>[
-                     ///// دسته بندی
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: Row(
+              child: ListView(
+                children: <Widget>[
+                  ///// دسته بندی
+                  productCategory(),
+                  ///// کد محصول
+                  productCode(model),
+                  ///// نام محصول
+                  productName(),
+                  ///// قیمت خرید
+                  productBuyPrice(),
+                  ///// قیمت فروش
+                  productSalePrice(),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Column(
                         children: <Widget>[
-                          Expanded(
-                            flex: 6,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 5),
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: <Widget>[
-                                  fildTitles('دسته بندی'),
-                                  divider(),
-                                  SizedBox(
-                                      width: 180.0,
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton(
-                                          items: _catListMenu,
-                                          isExpanded: true,
-                                          value: _catSelectedID,
-                                          hint: Text(
-                                            'یک دسته را انتخاب کنید',
-                                            textDirection: TextDirection.rtl,
-                                          ),
-                                          onChanged: (newVal) {
-                                            setState(() {
-                                              _catSelectedID = newVal;
-                                            });
-                                          },
-                                        ),
-                                      )),
-                                ],
-                              ),
-                            ),
-                          ),
+                          ////  موجودی محصول
+                          productCount(),
+                          //// سایز محصول
+                          productSize(),
+                          //// تصویر محصول
+                          productImage(model),
                         ],
                       ),
-                    ),
-                     ///// کد محصول
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 6,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 5),
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: <Widget>[
-                                  fildTitles('کد محصول'),
-                                  divider(),
-                                  SizedBox(
-                                    width: 120.0,
-                                    child: TextFormField(
-                                      style: fildInputText,
-                                      controller: _productCode,
-                                      decoration: fildInputForm,
-                                      onSaved: (val) => setState(() {
-                                        _productCode.text = val;
-                                      }),
-                                      validator: (val) {
-                                        if (val.isEmpty) {
-                                          setState(() {
-                                            _formError = true;
-                                          });
-                                        }
-                                        return null;
-                                      },
-                                      
-                                      maxLength: 10,
-                                      keyboardType: TextInputType.number,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: IconButton(
-                              icon: Icon(Icons.camera_alt),
-                              iconSize: 30,
-                              color: Colors.grey.shade500,
-                              onPressed: () {
-                                model.scanBarcode().whenComplete(() {
-                                  model.checkProduct().whenComplete(() {
-                                    setState(() {
-                                      _productCode.text = model.barcode;
-                                    });
-                                  });
-                                });
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    ///// نام محصول
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 6,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 5),
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: <Widget>[
-                                  fildTitles('نام محصول'),
-                                  divider(),
-                                  SizedBox(
-                                    width: 180.0,
-                                    child: TextFormField(
-                                      style: fildInputText,
-                                      focusNode: _productNameFocus,
-                                      decoration: fildInputForm,
-                                      maxLength: 28,
-                                     // controller: _productName,
-                                      onSaved: (val) => setState(() {
-                                        _productName = val;
-                                      }),
-                                      validator: (val) {
-                                        if (val.isEmpty) {
-                                          setState(() {
-                                            _formError = true;
-                                          });
-                                        }
-                                        return null;
-                                      },
-                                      keyboardType: TextInputType.text,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ///// قیمت خرید
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 6,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 5),
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: <Widget>[
-                                  fildTitles('فی خرید'),
-                                  divider(),
-                                  SizedBox(
-                                    width: 180.0,
-                                    child: TextFormField(
-                                      style: fildInputText,
-                                      controller: _productSalePriceController,
-                                      decoration: fildInputForm.copyWith(
-                                        suffixText: 'تومان',
-                                      ),
-                                      focusNode: _productBuyPriceFocus,
-                                      maxLength: 9,
-                                      onSaved: (val) => setState(() {
-                                        _productBuyPrice = val;
-                                      }),
-                                      validator: (val) {
-                                        if (val.isEmpty) {
-                                          setState(() {
-                                            _formError = true;
-                                          });
-                                        }
-                                        return null;
-                                      },
-                                      textInputAction: TextInputAction.next,
-                                      onFieldSubmitted: (f) {
-                                        FocusScope.of(context).requestFocus(
-                                            _productBuyPriceFocus);
-                                      },
-                                      keyboardType: TextInputType.number,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ///// قیمت فروش
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 6,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 5),
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: <Widget>[
-                                  fildTitles('فی فروش'),
-                                  divider(),
-                                  SizedBox(
-                                    width: 180.0,
-                                    child: TextFormField(
-                                      style: fildInputText,
-                                      controller: _productBuyPriceController,
-                                      decoration: fildInputForm.copyWith(
-                                          suffixText: 'تومان'),
-                                      focusNode: _productSalePriceFocus,
-                                      maxLength: 9,
-                                      onSaved: (val) => setState(() {
-                                        _productSalePrice = val;
-                                      }),
-                                      validator: (val) {
-                                        if (val.isEmpty) {
-                                          setState(() {
-                                            _formError = true;
-                                          });
-                                        }
-                                        return null;
-                                      },
-                                      keyboardType: TextInputType.number,
-                                      textInputAction: TextInputAction.next,
-                                      onFieldSubmitted: (f) {
-                                        FocusScope.of(context)
-                                            .requestFocus(_productCountFocus);
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ///// قیمت فروش
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 3),
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 5),
-                                    child: Wrap(
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.center,
-                                      children: <Widget>[
-                                        fildTitles('موجودی'),
-                                        divider(),
-                                        SizedBox(
-                                          width: 40.0,
-                                          child: TextFormField(
-                                            style: fildInputText,
-                                            decoration: fildInputForm,
-                                            focusNode: _productCountFocus,
-                                            maxLength: 2,
-                                            onSaved: (val) => setState(() {
-                                              _productCount = val;
-                                            }),
-                                            validator: (val) {
-                                              if (val.isEmpty) {
-                                                setState(() {
-                                                  _formError = true;
-                                                });
-                                              }
-                                              return null;
-                                            },
-                                            keyboardType: TextInputType.number,
-                                            textInputAction:
-                                                TextInputAction.next,
-                                            onFieldSubmitted: (f) {
-                                              FocusScope.of(context)
-                                                  .requestFocus(
-                                                      _productSizeFocus);
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 3),
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 5),
-                                    child: Wrap(
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.center,
-                                      children: <Widget>[
-                                        fildTitles('سایزبندی'),
-                                        divider(),
-                                        SizedBox(
-                                          width: 40.0,
-                                          child: TextFormField(
-                                            style: fildInputText,
-                                            decoration: fildInputForm,
-                                            focusNode: _productSizeFocus,
-                                            maxLength: 2,
-                                            onSaved: (val) => setState(() {
-                                              _productSize = val;
-                                            }),
-                                            validator: (val) {
-                                              if (val.isEmpty) {
-                                                setState(() {
-                                                  _formError = true;
-                                                });
-                                              }
-                                              return null;
-                                            },
-                                            keyboardType: TextInputType.number,
-                                            textInputAction:
-                                                TextInputAction.next,
-                                            onFieldSubmitted: (f) {
-                                              FocusScope.of(context)
-                                                  .requestFocus(
-                                                      _productDesFocus);
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 3),
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 5),
-                                    child: Wrap(
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.center,
-                                      children: <Widget>[
-                                        SizedBox(
-                                          width: 50.0,
-                                          child: IconButton(
-                                            icon: Icon(Icons.photo_camera),
-                                            iconSize: 30,
-                                            color: Colors.grey.shade500,
-                                            onPressed: () {
-                                              setState(() {
-                                                _loadingImage = true;
-                                              });
-                                              model
-                                                  .getImageCamera()
-                                                  .whenComplete(() {
-                                                setState(() {
-                                                  _loadingImage = false;
-                                                });
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        divider(),
-                                        SizedBox(
-                                          width: 50.0,
-                                          child: IconButton(
-                                            icon: Icon(Icons.photo_library),
-                                            iconSize: 30,
-                                            color: Colors.grey.shade500,
-                                            onPressed: () {
-                                              model.getImageGallery();
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                      Spacer(),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 3),
+                        width: 145,
+                        height: 175,
+                        child: _imageLoading
+                            ? SpinKitFadingGrid(
+                                color: Colors.blueGrey,
+                                size: 120,
+                              )
+                            : null,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: _isNoImage
+                                  ? AssetImage('images/noimage.png')
+                                  : FileImage(model.productImageFile),
+                              fit: BoxFit.cover),
+                          borderRadius: BorderRadius.circular(15),
                         ),
-                        Spacer(),
-                        Container(
-                          margin: EdgeInsets.symmetric(vertical: 3),
-                          width: 145,
-                          height: 175,
-                          child: _loadingImage
-                              ? SpinKitFadingGrid(
-                                  color: Colors.blueGrey,
-                                  size: 120,
-                                )
-                              : null,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: model.productImageFile == null
-                                    ? AssetImage('images/noimage.png')
-                                    : FileImage(model.productImageFile),
-                                fit: BoxFit.cover),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                      ],
-                    ),
-                    ///// قیمت خرید
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 6,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 5),
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: <Widget>[
-                                  fildTitles('توضیحات'),
-                                  divider(),
-                                  SizedBox(
-                                    width: 180.0,
-                                    child: TextFormField(
-                                      style: fildInputText,
-                                      decoration: fildInputForm,
-                                      maxLength: 30,
-                                      onSaved: (val) => setState(() {
-                                        _productDes = val;
-                                      }),
-                                      validator: (val) {
-                                        if (val.isEmpty) {
-                                          setState(() {
-                                            _formError = true;
-                                          });
-                                        }
-                                        return null;
-                                      },
-                                      keyboardType: TextInputType.text,
-                                      focusNode: _productDesFocus,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
-                    Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 18,
-                          horizontal: 60,
-                        ),
-                        child: Container(
-                          height: 40,
-                          child: RaisedButton(
-                            onPressed: () {
-                              print(_productCode.text);
-                              print(_productName);
-                              print(_catSelectedID);
-                              print(_productCount);
-                              print(_productDes);
-                              print(_productSalePrice);
-                              print(_productBuyPrice);
-                              print(_productSize);
-                              print(model.productImageFile);
+                    ],
+                  ),
+                  ///// توضیحات محصول
+                  productDes(),
 
-                              if (_formKey.currentState.validate() &&
-                                  
-                                  model.productImageFile != null) {
-                                _formKey.currentState.save();
-                                ProductModel newproduct = ProductModel(
-                                  product_barcode: _productCode.text,
-                                  product_name: _productName,
-                                  product_category: _catSelectedID,
-                                  product_count: _productCount,
-                                  product_des: _productDes,
-                                  product_price_sell: _productSalePrice,
-                                  product_price_buy: _productBuyPrice,
-                                  product_size: _productSize,
-                                );
-                                model
-                                    .addNewProduct(newproduct)
-                                    .whenComplete(() {
-                                  model.successDialog(
-                                      context: context,
-                                      title: 'محصول با موفقیت ذخیره شد',
-                                      desc: ' کد محصول ' + _productCode.text);
-                                });
-                              } else {
-                                model.errorDialog(
-                                    context: context,
-                                    title: 'خطا داریم',
-                                    desc: 'لطفا در وارد کردن مقادیر دقت کنید');
-                              }
-                            },
-                            child: Text(
-                              'ثبت محصول',
-                              style: buttonText,
-                            ),
-                            color: Colors.pinkAccent,
-                            shape: StadiumBorder(),
+                  Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 18,
+                        horizontal: 60,
+                      ),
+                      child: Container(
+                        height: 40,
+                        child: RaisedButton(
+                          onPressed: () {
+                            ProductModel newproduct = ProductModel(
+                              product_barcode: _productCode.text,
+                              product_name: _productName.text,
+                              product_category: _catSelectedID,
+                              product_count: _productCount.text,
+                              product_des: _productDes.text,
+                              product_price_sell: _productSalePrice.text,
+                              product_price_buy: _productBuyPrice.text,
+                              product_size: _productSize.text,
+                              
+                            );
+                            checkProducts(context, newproduct, model);
+                          },
+                          child: Text(
+                            'ثبت محصول',
+                            style: buttonText,
                           ),
-                        ))
-                  ],
-                ),
+                          color: Colors.pinkAccent,
+                          shape: StadiumBorder(),
+                        ),
+                      ))
+                ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget productCategory() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 6,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  fildTitles('دسته بندی'),
+                  divider(),
+                  SizedBox(
+                      width: 180.0,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          items: _catListMenu,
+                          isExpanded: true,
+                          value: _catSelectedID,
+                          hint: _catLoading
+                              ? Text(
+                                  ' کمی صبر کنید ...',
+                                  style: TextStyle(color: Colors.redAccent),
+                                )
+                              : Text(
+                                  ' انتخاب کنید',
+                                  textDirection: TextDirection.rtl,
+                                ),
+                          onChanged: (newVal) {
+                            setState(() {
+                              _catSelectedID = newVal;
+                            });
+                          },
+                        ),
+                      )),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget productCode(MainModel model) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 6,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  fildTitles('کد محصول'),
+                  divider(),
+                  SizedBox(
+                    width: 120.0,
+                    child: TextFormField(
+                      style: fildInputText,
+                      controller: _productCode,
+                      decoration: fildInputForm,
+                      maxLength: 10,
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      onFieldSubmitted: (code) {
+                        setState(() {
+                          model.barcode = code;
+                        });
+                        model.checkProduct(context);
+                        FocusScope.of(context).requestFocus(_productNameFocus);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: IconButton(
+              icon: Icon(Icons.camera_alt),
+              iconSize: 30,
+              color: Colors.grey.shade500,
+              onPressed: () {
+                model.scanBarcode().whenComplete(() {
+                  model.checkProduct(context).whenComplete(() {
+                    setState(() {
+                      _productCode.text = model.barcode;
+                    });
+                  });
+                });
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget productName() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 6,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  fildTitles('نام محصول'),
+                  divider(),
+                  SizedBox(
+                    width: 180.0,
+                    child: TextFormField(
+                      style: fildInputText,
+                      focusNode: _productNameFocus,
+                      decoration: fildInputForm,
+                      maxLength: 28,
+                      controller: _productName,
+                      onFieldSubmitted: (f) {
+                        FocusScope.of(context)
+                            .requestFocus(_productBuyPriceFocus);
+                      },
+                      keyboardType: TextInputType.text,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget productBuyPrice() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 6,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  fildTitles('فی خرید'),
+                  divider(),
+                  SizedBox(
+                    width: 180.0,
+                    child: TextFormField(
+                      style: fildInputText,
+                      controller: _productBuyPrice,
+                      decoration: fildInputForm.copyWith(
+                        suffixText: 'تومان',
+                      ),
+                      focusNode: _productBuyPriceFocus,
+                      maxLength: 9,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (f) {
+                        FocusScope.of(context)
+                            .requestFocus(_productSalePriceFocus);
+                      },
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget productSalePrice() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 6,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  fildTitles('فی فروش'),
+                  divider(),
+                  SizedBox(
+                    width: 180.0,
+                    child: TextFormField(
+                      style: fildInputText,
+                      controller: _productSalePrice,
+                      decoration: fildInputForm.copyWith(suffixText: 'تومان'),
+                      focusNode: _productSalePriceFocus,
+                      maxLength: 9,
+                      keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (f) {
+                        FocusScope.of(context).requestFocus(_productCountFocus);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget productCount() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[
+                fildTitles('موجودی'),
+                divider(),
+                SizedBox(
+                  width: 40.0,
+                  child: TextFormField(
+                    style: fildInputText,
+                    decoration: fildInputForm,
+                    focusNode: _productCountFocus,
+                    maxLength: 2,
+                    controller: _productCount,
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (f) {
+                      FocusScope.of(context).requestFocus(_productSizeFocus);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget productSize() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[
+                fildTitles('سایزبندی'),
+                divider(),
+                SizedBox(
+                  width: 40.0,
+                  child: TextFormField(
+                    style: fildInputText,
+                    decoration: fildInputForm,
+                    focusNode: _productSizeFocus,
+                    maxLength: 2,
+                    controller: _productSize,
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (f) {
+                      FocusScope.of(context).requestFocus(_productDesFocus);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget productImage(MainModel model) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  width: 50.0,
+                  child: IconButton(
+                    icon: Icon(Icons.photo_camera),
+                    iconSize: 30,
+                    color: Colors.grey.shade500,
+                    onPressed: () {
+                      setState(() {
+                        _imageLoading = true;
+                      });
+                      model.getImageCamera().whenComplete(() {
+                        setState(() {
+                          _isNoImage = false;
+                          _imageLoading = false;
+                        });
+                      });
+                    },
+                  ),
+                ),
+                divider(),
+                SizedBox(
+                  width: 50.0,
+                  child: IconButton(
+                    icon: Icon(Icons.photo_library),
+                    iconSize: 30,
+                    color: Colors.grey.shade500,
+                    onPressed: () {
+                      setState(() {
+                        _imageLoading = true;
+                      });
+                      model.getImageGallery().whenComplete(() {
+                        setState(() {
+                          _isNoImage = false;
+                          _imageLoading = false;
+                        });
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget productDes() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 6,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  fildTitles('توضیحات'),
+                  divider(),
+                  SizedBox(
+                    width: 180.0,
+                    child: TextFormField(
+                      style: fildInputText,
+                      decoration: fildInputForm,
+                      maxLength: 30,
+                      controller: _productDes,
+                      keyboardType: TextInputType.text,
+                      focusNode: _productDesFocus,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

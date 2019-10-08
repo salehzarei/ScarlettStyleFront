@@ -29,6 +29,7 @@ class MainModel extends Model {
   bool isLoadingProductData = true;
   bool isLoadingAllProduct = true;
   bool isLoadingSelectedProduct = true;
+  bool productAddedToServer = false ;
 
   bool dataAdded = true;
   bool datadeleted = false;
@@ -73,12 +74,13 @@ class MainModel extends Model {
         ]).show();
   }
 
-  Future errorDialog({context, title, desc}) async {
+  Future errorDialog({context, title, desc , content}) async {
     return Alert(
         context: context,
         title: title,
         type: AlertType.error,
         desc: desc,
+        content: content,
         buttons: [
           DialogButton(
             onPressed: () => Navigator.pop(context),
@@ -255,26 +257,30 @@ class MainModel extends Model {
       await request.send().then((resopnse) {
         if (resopnse.statusCode == 200) {
           print("Data Send");
+          productAddedToServer = true ;
           productImageFile.writeAsStringSync('');
           notifyListeners();
         } else {
           print("Error to Upload Data:${resopnse.statusCode} ");
+          productAddedToServer = false ;
+          notifyListeners();
         }
       });
     }
   }
 
-  Future checkProduct() async {
+  Future checkProduct(BuildContext context) async {
     var response = await http.post('http://shifon.ir/tmp/checkproduct.php',
         body: {'product_barcode': barcode});
     if (response.statusCode == 200 && response.body != '[]') {
-      List<ProductModel> detectedProduct = (json.decode(response.body) as List)
-          .map((i) => ProductModel.proJson(i))
-          .toList();
-
-      print(detectedProduct[0].product_name);
+      Map jjson = json.decode(response.body);
+      ProductModel product = ProductModel.proJson(jjson);
+      if (product.product_barcode == barcode)
+        errorDialog(
+            context: context,
+            title: 'این کد قبلا ثبت شده',
+            desc: 'بهتر است یک کد دیگه انتخاب کنید');
     }
-    return response;
   }
 
   Future updateCategories(
