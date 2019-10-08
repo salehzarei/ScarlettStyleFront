@@ -14,6 +14,7 @@ class AddNewProduct extends StatefulWidget {
 }
 
 class _AddNewProductState extends State<AddNewProduct> {
+
   Widget divider() {
     return Container(
       color: Colors.grey.shade500,
@@ -41,7 +42,6 @@ class _AddNewProductState extends State<AddNewProduct> {
   final FocusNode _productDesFocus = FocusNode();
 
   TextEditingController _productCode = TextEditingController();
-
   String _productName;
   String _productDes;
   String _productBuyPrice;
@@ -64,6 +64,7 @@ class _AddNewProductState extends State<AddNewProduct> {
   String _catSelectedID;
   bool _loadingImage = false;
   bool _formError = false;
+  
 
   @override
   void initState() {
@@ -85,15 +86,17 @@ class _AddNewProductState extends State<AddNewProduct> {
         });
       }
     });
+    print(model.productImageFile);
+    if(model.productImageFile == null){
+      print('image is null');
+    } else print("Image not null");
   }
 
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
       builder: (context, child, model) {
-        print(_productName);
-
-        return Directionality(
+          return Directionality(
           textDirection: TextDirection.rtl,
           child: Scaffold(
             backgroundColor: Colors.grey.shade100,
@@ -114,7 +117,51 @@ class _AddNewProductState extends State<AddNewProduct> {
                 key: _formKey,
                 child: ListView(
                   children: <Widget>[
-                    ///// کد محصول
+                     ///// دسته بندی
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 6,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 5),
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: <Widget>[
+                                  fildTitles('دسته بندی'),
+                                  divider(),
+                                  SizedBox(
+                                      width: 180.0,
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton(
+                                          items: _catListMenu,
+                                          isExpanded: true,
+                                          value: _catSelectedID,
+                                          hint: Text(
+                                            'یک دسته را انتخاب کنید',
+                                            textDirection: TextDirection.rtl,
+                                          ),
+                                          onChanged: (newVal) {
+                                            setState(() {
+                                              _catSelectedID = newVal;
+                                            });
+                                          },
+                                        ),
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                     ///// کد محصول
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 3),
                       child: Row(
@@ -150,7 +197,7 @@ class _AddNewProductState extends State<AddNewProduct> {
                                         }
                                         return null;
                                       },
-                                      autofocus: true,
+                                      
                                       maxLength: 10,
                                       keyboardType: TextInputType.number,
                                     ),
@@ -205,6 +252,7 @@ class _AddNewProductState extends State<AddNewProduct> {
                                       focusNode: _productNameFocus,
                                       decoration: fildInputForm,
                                       maxLength: 28,
+                                     // controller: _productName,
                                       onSaved: (val) => setState(() {
                                         _productName = val;
                                       }),
@@ -219,49 +267,6 @@ class _AddNewProductState extends State<AddNewProduct> {
                                       keyboardType: TextInputType.text,
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ///// دسته بندی
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 6,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 5),
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: <Widget>[
-                                  fildTitles('دسته بندی'),
-                                  divider(),
-                                  SizedBox(
-                                      width: 180.0,
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton(
-                                          items: _catListMenu,
-                                          value: _catSelectedID,
-                                          hint: Text(
-                                            'یک دسته را انتخاب کنید',
-                                            textDirection: TextDirection.rtl,
-                                          ),
-                                          onChanged: (newVal) {
-                                            setState(() {
-                                              _catSelectedID = newVal;
-                                            });
-                                          },
-                                        ),
-                                      )),
                                 ],
                               ),
                             ),
@@ -554,9 +559,9 @@ class _AddNewProductState extends State<AddNewProduct> {
                               : null,
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                                image: model.cateImageFile == null
+                                image: model.productImageFile == null
                                     ? AssetImage('images/noimage.png')
-                                    : FileImage(model.cateImageFile),
+                                    : FileImage(model.productImageFile),
                                 fit: BoxFit.cover),
                             borderRadius: BorderRadius.circular(15),
                           ),
@@ -619,9 +624,19 @@ class _AddNewProductState extends State<AddNewProduct> {
                           height: 40,
                           child: RaisedButton(
                             onPressed: () {
+                              print(_productCode.text);
+                              print(_productName);
+                              print(_catSelectedID);
+                              print(_productCount);
+                              print(_productDes);
+                              print(_productSalePrice);
+                              print(_productBuyPrice);
+                              print(_productSize);
+                              print(model.productImageFile);
+
                               if (_formKey.currentState.validate() &&
-                                  !_formError &&
-                                  model.cateImageFile != null) {
+                                  
+                                  model.productImageFile != null) {
                                 _formKey.currentState.save();
                                 ProductModel newproduct = ProductModel(
                                   product_barcode: _productCode.text,

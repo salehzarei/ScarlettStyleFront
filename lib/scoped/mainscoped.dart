@@ -36,6 +36,7 @@ class MainModel extends Model {
 
   String currentSelectedCatID;
   File cateImageFile;
+  File productImageFile;
 
 //// fix Price ////
   fixPrice(String price) {
@@ -233,33 +234,34 @@ class MainModel extends Model {
     print(newProduct.product_count);
     print(newProduct.product_size);
     print(newProduct.product_des);
-    print(basename(cateImageFile.path));
-    // if (cateImageFile != null) {
-    //   var stream =
-    //       http.ByteStream(DelegatingStream.typed(cateImageFile.openRead()));
-    //   var length = await cateImageFile.length();
-    //   var url = Uri.parse("https://shifon.ir/tmp/addproducts.php");
-    //   var request = http.MultipartRequest("POST", url);
-    //   var multipartFile = http.MultipartFile("product_image", stream, length,
-    //       filename: basename(cateImageFile.path));
-    //   request.files.add(multipartFile);
-    //   request.fields['product_name'] = newProduct.product_name;
-    //   request.fields['product_category'] = newProduct.product_category;
-    //   request.fields['product_des'] = newProduct.product_des;
-    //   request.fields['product_size'] = newProduct.product_size;
-    //   request.fields['product_barcode'] = newProduct.product_barcode;
-    //   request.fields['product_count'] = newProduct.product_count;
-    //   request.fields['product_price_buy'] = newProduct.product_price_buy;
-    //   request.fields['product_price_sell'] = newProduct.product_price_sell;
-    //   await request.send().then((resopnse) {
-    //     if (resopnse.statusCode == 200) {
-    //       print("Data Send");
-    //       notifyListeners();
-    //     } else {
-    //       print("Error to Upload Data:${resopnse.statusCode} ");
-    //     }
-    //   });
-    // }
+    print(basename(productImageFile.path));
+    if (productImageFile != null) {
+      var stream =
+          http.ByteStream(DelegatingStream.typed(productImageFile.openRead()));
+      var length = await productImageFile.length();
+      var url = Uri.parse("https://shifon.ir/tmp/addproducts.php");
+      var request = http.MultipartRequest("POST", url);
+      var multipartFile = http.MultipartFile("product_image", stream, length,
+          filename: basename(productImageFile.path));
+      request.files.add(multipartFile);
+      request.fields['product_name'] = newProduct.product_name;
+      request.fields['product_category'] = newProduct.product_category;
+      request.fields['product_des'] = newProduct.product_des;
+      request.fields['product_size'] = newProduct.product_size;
+      request.fields['product_barcode'] = newProduct.product_barcode;
+      request.fields['product_count'] = newProduct.product_count;
+      request.fields['product_price_buy'] = newProduct.product_price_buy;
+      request.fields['product_price_sell'] = newProduct.product_price_sell;
+      await request.send().then((resopnse) {
+        if (resopnse.statusCode == 200) {
+          print("Data Send");
+          productImageFile.writeAsStringSync('');
+          notifyListeners();
+        } else {
+          print("Error to Upload Data:${resopnse.statusCode} ");
+        }
+      });
+    }
   }
 
   Future checkProduct() async {
@@ -354,7 +356,7 @@ class MainModel extends Model {
       Img.Image smallerImg = Img.copyResize(image, width: 500);
       var compressImg = File("$path/categorie_image_$rand.jpg")
         ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 95));
-      cateImageFile = compressImg;
+      productImageFile = compressImg;
 
       notifyListeners();
     }
@@ -371,7 +373,7 @@ class MainModel extends Model {
       Img.Image smallerImg = Img.copyResize(image, width: 500);
       var compressImg = File("$path/categorie_image_$rand.jpg")
         ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 95));
-      cateImageFile = compressImg;
+      productImageFile = compressImg;
 
       notifyListeners();
     }
