@@ -34,6 +34,31 @@ class _AddNewProductState extends State<AddNewProduct> {
     );
   }
 
+  void showAlert(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            content: Container(
+              width: 50,
+              height: 80,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      ' ...ذخیره در سرور',
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    Spacer(),
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  ]),
+            )));
+  }
+
   final FocusNode _productNameFocus = FocusNode();
   final FocusNode _productBuyPriceFocus = FocusNode();
   final FocusNode _productSalePriceFocus = FocusNode();
@@ -43,8 +68,6 @@ class _AddNewProductState extends State<AddNewProduct> {
 
   TextEditingController _productCode = TextEditingController();
   TextEditingController _productName = TextEditingController();
-  TextEditingController _productBuyPrice = TextEditingController();
-  TextEditingController _productSalePrice = TextEditingController();
   TextEditingController _productCount = TextEditingController();
   TextEditingController _productSize = TextEditingController();
   TextEditingController _productDes = TextEditingController();
@@ -174,12 +197,22 @@ class _AddNewProductState extends State<AddNewProduct> {
                               product_category: _catSelectedID,
                               product_count: _productCount.text,
                               product_des: _productDes.text,
-                              product_price_sell: _productSalePrice.text,
-                              product_price_buy: _productBuyPrice.text,
+                              product_price_sell:
+                                  _productSalePriceController.text.isEmpty
+                                      ? '0'
+                                      : _productSalePriceController.numberValue.round()
+                                          .toString(),
+                              product_price_buy:
+                                  _productBuyPriceController.text.isEmpty
+                                      ? '0'
+                                      : _productBuyPriceController.numberValue.round()
+                                          .toString(),
                               product_size: _productSize.text,
-                              
                             );
                             checkProducts(context, newproduct, model);
+                           ! model.productAddedToServer
+                                ? showAlert(context)
+                                : Container();
                           },
                           child: Text(
                             'ثبت محصول',
@@ -275,11 +308,15 @@ class _AddNewProductState extends State<AddNewProduct> {
                       maxLength: 10,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
-                      onFieldSubmitted: (code) {
+                      onFieldSubmitted: (code) async {
                         setState(() {
                           model.barcode = code;
                         });
-                        model.checkProduct(context);
+
+                        model.checkProduct(context).then((val) {
+                          if (!val) _productCode.clear();
+                        });
+
                         FocusScope.of(context).requestFocus(_productNameFocus);
                       },
                     ),
@@ -296,10 +333,13 @@ class _AddNewProductState extends State<AddNewProduct> {
               color: Colors.grey.shade500,
               onPressed: () {
                 model.scanBarcode().whenComplete(() {
-                  model.checkProduct(context).whenComplete(() {
-                    setState(() {
-                      _productCode.text = model.barcode;
-                    });
+                  model.checkProduct(context).then((val) {
+                    if (!val)
+                      _productCode.clear();
+                    else
+                      setState(() {
+                        _productCode.text = model.barcode;
+                      });
                   });
                 });
               },
@@ -374,7 +414,7 @@ class _AddNewProductState extends State<AddNewProduct> {
                     width: 180.0,
                     child: TextFormField(
                       style: fildInputText,
-                      controller: _productBuyPrice,
+                      controller: _productBuyPriceController,
                       decoration: fildInputForm.copyWith(
                         suffixText: 'تومان',
                       ),
@@ -419,7 +459,7 @@ class _AddNewProductState extends State<AddNewProduct> {
                     width: 180.0,
                     child: TextFormField(
                       style: fildInputText,
-                      controller: _productSalePrice,
+                      controller: _productSalePriceController,
                       decoration: fildInputForm.copyWith(suffixText: 'تومان'),
                       focusNode: _productSalePriceFocus,
                       maxLength: 9,

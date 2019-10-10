@@ -29,7 +29,7 @@ class MainModel extends Model {
   bool isLoadingProductData = true;
   bool isLoadingAllProduct = true;
   bool isLoadingSelectedProduct = true;
-  bool productAddedToServer = false ;
+  bool productAddedToServer = false;
 
   bool dataAdded = true;
   bool datadeleted = false;
@@ -74,7 +74,7 @@ class MainModel extends Model {
         ]).show();
   }
 
-  Future errorDialog({context, title, desc , content}) async {
+  Future errorDialog({context, title, desc, content}) async {
     return Alert(
         context: context,
         title: title,
@@ -237,6 +237,8 @@ class MainModel extends Model {
     print(newProduct.product_size);
     print(newProduct.product_des);
     print(basename(productImageFile.path));
+    productAddedToServer = false;
+    notifyListeners();
     if (productImageFile != null) {
       var stream =
           http.ByteStream(DelegatingStream.typed(productImageFile.openRead()));
@@ -256,20 +258,19 @@ class MainModel extends Model {
       request.fields['product_price_sell'] = newProduct.product_price_sell;
       await request.send().then((resopnse) {
         if (resopnse.statusCode == 200) {
-          print("Data Send");
-          productAddedToServer = true ;
+          productAddedToServer = true;
           productImageFile.writeAsStringSync('');
           notifyListeners();
         } else {
           print("Error to Upload Data:${resopnse.statusCode} ");
-          productAddedToServer = false ;
+          productAddedToServer = false;
           notifyListeners();
         }
       });
     }
   }
 
-  Future checkProduct(BuildContext context) async {
+  Future<bool> checkProduct(BuildContext context) async {
     var response = await http.post('http://shifon.ir/tmp/checkproduct.php',
         body: {'product_barcode': barcode});
     if (response.statusCode == 200 && response.body != '[]') {
@@ -278,9 +279,11 @@ class MainModel extends Model {
       if (product.product_barcode == barcode)
         errorDialog(
             context: context,
-            title: 'این کد قبلا ثبت شده',
-            desc: 'بهتر است یک کد دیگه انتخاب کنید');
-    }
+            title: 'ای بابا ! این کد قبلا ثبت شده',
+            desc: 'لطفا یک بارکد دیگه ثبت کن');
+      return false;
+    } else
+      return true;
   }
 
   Future updateCategories(
@@ -365,6 +368,10 @@ class MainModel extends Model {
       productImageFile = compressImg;
 
       notifyListeners();
+    } else {
+      productImageFile = null;
+
+      notifyListeners();
     }
   }
 
@@ -380,6 +387,10 @@ class MainModel extends Model {
       var compressImg = File("$path/categorie_image_$rand.jpg")
         ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 95));
       productImageFile = compressImg;
+
+      notifyListeners();
+    } else {
+      productImageFile = null;
 
       notifyListeners();
     }
