@@ -5,29 +5,32 @@ import '../models/productmodel.dart';
 Future<void> checkProducts(
     BuildContext context, ProductModel product, MainModel model) async {
   List<String> errorMassages = [];
-  print(model.productImageFile);
-
-  if (product.product_barcode.isEmpty) errorMassages.add('بارکد وارد نشده است');
   if (product.product_category == null)
     errorMassages.add('دسته بندی انتخاب نشده');
+  if (product.product_barcode.isEmpty) errorMassages.add('بارکد وارد نشده است');
   if (product.product_name.isEmpty) errorMassages.add('نام محصول وارد نشده');
-  if (product.product_price_sell.isEmpty)
+  if (product.product_price_sell == '0' || product.product_price_sell.isEmpty)
     errorMassages.add('قیمت فروش وارد نشده');
+  else if (int.parse(product.product_price_sell) <=
+      int.parse(product.product_price_buy))
+    errorMassages.add('قیمت فروش کمتر از خرید است');
   if (product.product_count.isEmpty)
     errorMassages.add('موجودی محصول وارد نشده');
   if (product.product_size.isEmpty)
     errorMassages.add('سایزبندری محصول وارد نشده');
-  if (model.productImageFile == null ) errorMassages.add('عکس محصول انتخاب نشده');
+  if (model.productImageFile == null)
+    errorMassages.add('عکس محصول انتخاب نشده');
 
   if (errorMassages.length != 0)
     model.errorDialog(
         context: context,
-        title: 'عزیزم ! خطا داری',
-        desc: 'خواهش میکنم موارد رو درست کن',
+        title: 'عزیزم ! دقت کن',
+        desc: 'موارد زیر رو درست کن لطفا',
         content: Container(
-          height: 30.0 * (errorMassages.length.round()-1),
+          height: errorMassages.length.round() * 25.0,
           child: ListView.builder(
             itemCount: errorMassages.length,
+            padding: EdgeInsets.symmetric(vertical: 10),
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 5),
@@ -50,10 +53,10 @@ Future<void> checkProducts(
             },
           ),
         ));
-  else
+  else {
     model.addNewProduct(product).whenComplete(() {
       if (model.productAddedToServer)
-        model.successDialog(
-            title: 'محصول با موفقیت ثبت شد', desc: 'خیلی متشکرم بانو' , context: context);
+        model.successDialog(title: 'محصول با موفقیت ثبت شد', context: context);
     });
+  }
 }
