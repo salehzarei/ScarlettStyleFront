@@ -4,7 +4,6 @@ import 'package:scoped_model/scoped_model.dart';
 import './scoped/mainscoped.dart';
 import 'dart:io';
 import 'dart:async';
-import './home.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key key}) : super(key: key);
@@ -55,7 +54,7 @@ int time = 10 ;
     return SplashScreen(
       seconds: time,
       loadingText: Text(loadingText,style: TextStyle(color: Colors.white),),
-      navigateAfterSeconds: Home(),
+    //  navigateAfterSeconds: Home(),
       title: Text(
         'اپلیکیشن اسکارلت',
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../scoped/mainscoped.dart';
 import '../models/adminmenumodel.dart';
-import './usermenuitems.dart';
 import './adminmenuitems.dart';
 import '../theme/menutheme.dart';
 
@@ -44,11 +43,7 @@ class _MenuState extends State<Menu> {
                         : ListView.builder(
                             itemCount: model.categoriList.length,
                             itemBuilder: (context, index) {
-                              return UserMenuItems(
-                                icon: Icons.star,
-                                menuitemindex: index,
-                                model: model,
-                              );
+                              return null;
                              
                             },
                           ),

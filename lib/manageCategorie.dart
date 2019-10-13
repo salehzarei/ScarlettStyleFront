@@ -112,7 +112,7 @@ class _ManageCategoriesState extends State<ManageCategories> {
 
                                       catimage = model.cateImageFile;
                                       if (!_deletesate) {
-                                        addnewcat(model, newcat, catimage);
+                                      //  addnewcat(model, newcat, catimage);
                                       } else {
                                         if (!picchange) {
                                           catimage = null ;
@@ -126,7 +126,7 @@ class _ManageCategoriesState extends State<ManageCategories> {
                                           categorie_icon: catemodel.categorie_icon,
                                           categorie_state: 'true',
                                         );
-                                        updatewcat(model, editcat, catimage);
+                                       // updatewcat(model, editcat, catimage);
                                       }
 
                                       setState(() {
@@ -163,7 +163,7 @@ class _ManageCategoriesState extends State<ManageCategories> {
                             visible: _deletesate,
                             child: IconButton(
                               onPressed: () {
-                                deletecat(model, catemodel);
+                               // deletecat(model, catemodel);
                                 setState(() {
                                   _refreshpage = true;
                                 });
@@ -181,44 +181,44 @@ class _ManageCategoriesState extends State<ManageCategories> {
         });
   }
 
-  Future deletecat(MainModel model, CategoriesModel cat) async {
-    try {
-      Navigator.pop(context);
-      await model
-          .deleteCategories(cat.categorie_id, cat.categorie_icon)
-          .whenComplete(() {
-        if (model.datadeleted) refresh(model);
-      });
-    } finally {
-      _catgoreides.clear();
-      _catgoreiname.clear();
-    }
-  }
+  // Future deletecat(MainModel model, CategoriesModel cat) async {
+  //   try {
+  //     Navigator.pop(context);
+  //     await model
+  //         .deleteCategories(cat.categorie_id, cat.categorie_icon)
+  //         .whenComplete(() {
+  //       if (model.datadeleted) refresh(model);
+  //     });
+  //   } finally {
+  //     _catgoreides.clear();
+  //     _catgoreiname.clear();
+  //   }
+  // }
 
-  Future updatewcat(MainModel model, CategoriesModel cat, image) async {
-    try {
-      Navigator.pop(context);
-      await model.updateCategories(cat, image).whenComplete(() {
-        if (model.dataupdated) refresh(model);
-      });
-    } finally {
-      _catgoreides.clear();
-      _catgoreiname.clear();
-    }
-  }
+  // Future updatewcat(MainModel model, CategoriesModel cat, image) async {
+  //   try {
+  //     Navigator.pop(context);
+  //     await model.updateCategories(cat, image).whenComplete(() {
+  //       if (model.dataupdated) refresh(model);
+  //     });
+  //   } finally {
+  //     _catgoreides.clear();
+  //     _catgoreiname.clear();
+  //   }
+  // }
 
-  Future addnewcat(MainModel model, CategoriesModel newcat, image) async {
-    try {
-      Navigator.pop(context);
-      await model.addCategories(newcat, image).whenComplete(() {
-        print(model.dataAdded);
-        if (model.dataAdded) refresh(model);
-      });
-    } finally {
-      _catgoreides.clear();
-      _catgoreiname.clear();
-    }
-  }
+  // Future addnewcat(MainModel model, CategoriesModel newcat, image) async {
+  //   try {
+  //     Navigator.pop(context);
+  //     await model.addNewCategories(newcat).whenComplete(() {
+  //       print(model.dataAdded);
+  //       if (model.dataAdded) refresh(model);
+  //     });
+  //   } finally {
+  //     _catgoreides.clear();
+  //     _catgoreiname.clear();
+  //   }
+  // }
 
   Future refresh(MainModel model) async {
     print("Run refresh");
