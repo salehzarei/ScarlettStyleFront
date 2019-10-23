@@ -64,7 +64,7 @@ class MainModel extends Model {
             ),
           ),
           DialogButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pushNamed(context,'/manageproducts'),
             color: Colors.redAccent,
             child: Text(
               "لیست محصولات",

@@ -61,7 +61,7 @@ class _ProductManageState extends State<ProductManage> {
               ),
             ),
             floatingActionButton: FloatingActionButton(
-              onPressed: () {},
+              onPressed: ()=>Navigator.pushNamed(context, '/addnewProduct'),
               backgroundColor: Colors.pinkAccent,
               child: Icon(Icons.add),
             ),

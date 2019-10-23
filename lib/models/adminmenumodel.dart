@@ -11,8 +11,7 @@ class AdminMenuModel {
 List<AdminMenuModel> adminmenuitem = [
   AdminMenuModel(title: 'مدیریت دسته بندی', icon: Icons.category , link: '/managecategories'),
   AdminMenuModel(title: 'مدیریت محصول ', icon: Icons.shopping_basket , link: '/manageproducts'),
-  AdminMenuModel(title: 'مدیریت کاربران ', icon: Icons.person , link: '/'),
-  AdminMenuModel(title: 'تنظیمات ', icon: Icons.settings , link: '/scan'),
+ 
 
 
 ];

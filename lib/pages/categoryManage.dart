@@ -378,7 +378,7 @@ class _CategoryManageState extends State<CategoryManage> {
           context: context);
     } else
       model.deleteCategories(category.categorie_id, context).whenComplete(() {
-        if (model.datadeleted) Navigator.pushNamed(context, '/');
+        if (model.datadeleted) Navigator.pushNamed(context, '/managecategories');
       });
   }
 }
