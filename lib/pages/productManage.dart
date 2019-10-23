@@ -54,6 +54,7 @@ class _ProductManageState extends State<ProductManage> {
                       width: MediaQuery.of(context).size.width - 20,
                       color: Colors.transparent,
                       child: productList(model, context),
+                      alignment: Alignment.centerLeft,
                     ),
                   )
                 ],
