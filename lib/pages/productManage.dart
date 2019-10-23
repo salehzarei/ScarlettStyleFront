@@ -43,7 +43,7 @@ class _ProductManageState extends State<ProductManage> {
             ),
             drawer: Menu(),
             body: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 13),
               child: ListView(
                 children: <Widget>[
                   searchBox(model),
@@ -129,14 +129,16 @@ class _ProductManageState extends State<ProductManage> {
             child: CircularProgressIndicator(),
           )
         : GridView.builder(
-          itemCount: 10,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2
-          ),
-          itemBuilder: (context,index){
-            return ProductCard();
-          },
-        
-        );
+            itemCount: model.productData.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 5.0 / 8.0,
+            ),
+            itemBuilder: (context, index) {
+              return ProductCard(
+                productmodel: model.productData[index],
+              );
+            },
+          );
   }
 }

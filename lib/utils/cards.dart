@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:scarlettstayle/scoped/mainscoped.dart';
+import 'package:scoped_model/scoped_model.dart';
 import '../models/productmodel.dart';
-import '../productdetiles.dart';
 
 class ProductCard extends StatelessWidget {
   final ProductModel productmodel;
@@ -9,102 +11,112 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ProductDetiles(
-                    product: productmodel,
-                  ))),
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-          color: Colors.white,
-          child: Padding(
-            padding: EdgeInsets.all(5),
-            child: Container(
-              alignment: Alignment.topCenter,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
+    return ScopedModelDescendant<MainModel>(
+      builder: (context, child, model) {
+        return GestureDetector(
+          onTap: () {},
+          child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Stack(
+                alignment: Alignment.topCenter,
                 children: <Widget>[
-                  Flexible(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(3.0),
-                      child: Image.network(
-                        'https://shifon.ir/tmp/product_image/${productmodel.product_image}',
-                        fit: BoxFit.cover,
-                        height: 190,
-                        width: 180,
+                  Positioned(
+                    top: 10,
+                    child: Container(
+                      height: 215,
+                      width: 150,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                                blurRadius: 5.0,
+                                color: Colors.grey.shade300,
+                                spreadRadius: 0.5,
+                                offset: Offset(0, 5))
+                          ],
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: CachedNetworkImageProvider(
+                                'https://shifon.ir/tmp/product_image/${productmodel.product_image}',
+                              ))),
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        height: 55,
+                        width: 150,
+                        alignment: Alignment.topCenter,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 5),
+                              child: Text(productmodel.product_des,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                      color: Colors.pink)),
+                            ),
+                            Text(productmodel.product_name,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 18,
+                                    color: Colors.grey.shade800)),
+                          ],
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9),
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(15),
+                              bottomRight: Radius.circular(15)),
+                        ),
                       ),
                     ),
                   ),
-                  Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            productmodel.product_name,
-                            style: TextStyle(fontSize: 13, color: Colors.grey),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            productmodel.product_des,
-                            style: TextStyle(
-                                fontSize: 15, color: Colors.grey.shade900),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(right: 45, bottom: 5),
-                            child: Text(
-                              ' ${productmodel.product_price_buy} تومان',
-                              style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.red.shade600,
-                                  decoration: TextDecoration.lineThrough),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    width: 100,
+                    height: 20,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(2),
+                    child: Text(
+                      'کد ${productmodel.product_barcode}',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                  Positioned(
+                    top: 215,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.pinkAccent.shade100.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        width: 125,
+                        height: 25,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(2),
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.end,
+                          children: <Widget>[
+                            Text(
+                                model.fixPrice(productmodel.product_price_sell),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 17)),
+                            Text(
+                              'تومان',
+                              style: TextStyle(fontSize: 12),
                             ),
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                "قیمت :",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey.shade500,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              VerticalDivider(
-                                width: 7,
-                              ),
-                              Text(
-                                "${productmodel.product_price_sell} تومان",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey.shade500,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ))
+                          ],
+                        )),
+                  ),
                 ],
-              ),
-            ),
-          ),
-        ),
-      ),
+              )),
+        );
+      },
     );
   }
 }
