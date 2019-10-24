@@ -138,13 +138,27 @@ class _CategoryManageState extends State<CategoryManage> {
                       children: <Widget>[
                         Container(height: 40, width: 8, color: randcolor),
                         Container(
-                          width: 185,
-                          // color: Colors.red,
-                          alignment: Alignment.centerRight,
-                          height: 60,
-                          child: Text(model.categoriData[index].categorie_name,
-                              style: titleStyle.copyWith(color: randcolor)),
-                        ),
+                            width: 185,
+                            // color: Colors.red,
+                            alignment: Alignment.centerRight,
+                            height: 60,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(model.categoriData[index].categorie_name,
+                                    style:
+                                        titleStyle.copyWith(color: randcolor)),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(model.categoriData[index].categorie_des,
+                                    style: titleStyle.copyWith(
+                                        color: Colors.grey.shade600,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.normal)),
+                              ],
+                            )),
                         Container(
                             width: 65,
                             //   color: Colors.yellow,
@@ -311,7 +325,8 @@ class _CategoryManageState extends State<CategoryManage> {
             categorie_state: 'true');
 
         model.updateCategories(newcategory).whenComplete(() {
-          if (model.dataupdated) Navigator.pushNamed(context, '/');
+          if (model.dataupdated)
+            Navigator.pushNamed(context, '/managecategories');
         });
       },
       child: Text(
@@ -378,7 +393,8 @@ class _CategoryManageState extends State<CategoryManage> {
           context: context);
     } else
       model.deleteCategories(category.categorie_id, context).whenComplete(() {
-        if (model.datadeleted) Navigator.pushNamed(context, '/managecategories');
+        if (model.datadeleted)
+          Navigator.pushNamed(context, '/managecategories');
       });
   }
 }

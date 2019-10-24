@@ -12,11 +12,7 @@ import './manageProducts.dart';
 import 'pages/categoryManage.dart';
 
 void main() {
-  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-  //     .then((_) {
-
-  // });
-  MainModel model = MainModel();
+ MainModel model = MainModel();
   runApp(
     ScopedModel<MainModel>(
         model: model,
@@ -44,4 +40,5 @@ void main() {
           },
         )),
   );
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 }

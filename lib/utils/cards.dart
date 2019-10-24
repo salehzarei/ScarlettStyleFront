@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scarlettstayle/scoped/mainscoped.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../models/productmodel.dart';
+import '../productdetiles.dart';
 
 class ProductCard extends StatelessWidget {
   final ProductModel productmodel;
@@ -14,7 +15,9 @@ class ProductCard extends StatelessWidget {
     return ScopedModelDescendant<MainModel>(
       builder: (context, child, model) {
         return GestureDetector(
-          onTap: () {},
+          onTap: ()=>Navigator.push(context, MaterialPageRoute(
+            builder: (context)=>ProductDetiles(product: productmodel,)
+          )),
           child: Directionality(
               textDirection: TextDirection.rtl,
               child: Stack(
