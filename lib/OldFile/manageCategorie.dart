@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:scarlettstayle/models/categoriesmodel.dart';
+import 'package:scarlettstayle/scoped/mainscoped.dart';
 import 'package:scoped_model/scoped_model.dart';
-import './models/categoriesmodel.dart';
-import './scoped/mainscoped.dart';
+
 
 bool picchange = false;
 

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scarlettstayle/pages/addNewProduct.dart';
 import 'package:scarlettstayle/pages/productManage.dart';
+import 'package:scarlettstayle/utils/splashScreen.dart';
 import 'package:scoped_model/scoped_model.dart';
 import './scoped/mainscoped.dart';
-import './splashScreen.dart';
 import 'pages/categoryManage.dart';
 
 void main() {
@@ -27,7 +27,6 @@ void main() {
           initialRoute: '/',
           routes: <String, WidgetBuilder>{
              '/': (context) => Splash(),
-          
             '/managecategories': (context) => CategoryManage(),
             '/manageproducts': (context) => ProductManage(),
             '/addnewProduct': (context) => AddNewProduct(),

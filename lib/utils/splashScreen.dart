@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:scarlettstayle/pages/productManage.dart';
+import 'package:scarlettstayle/scoped/mainscoped.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:scoped_model/scoped_model.dart';
-import './scoped/mainscoped.dart';
 import 'dart:io';
 import 'dart:async';
 
-import 'pages/productManage.dart';
+
 
 class Splash extends StatefulWidget {
   const Splash({Key key}) : super(key: key);
