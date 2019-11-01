@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:scarlettstayle/OldFile/basketiconcount.dart';
+import 'package:scarlettstayle/OldFile/colormenu.dart';
+import 'package:scarlettstayle/OldFile/sizemenu.dart';
+import 'package:scarlettstayle/models/productmodel.dart';
+import 'package:scarlettstayle/scoped/mainscoped.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'dart:math';
-import './models/productmodel.dart';
-import './scoped/mainscoped.dart';
-import './utils/basketiconcount.dart';
-import './utils/colormenu.dart';
-import './utils/sizemenu.dart';
+
 
 class ProductDetiles extends StatefulWidget {
   final ProductModel product;

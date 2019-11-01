@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scarlettstayle/scoped/mainscoped.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../models/productmodel.dart';
-import '../productdetiles.dart';
+
 
 class ProductCard extends StatelessWidget {
   final ProductModel productmodel;
@@ -16,7 +16,7 @@ class ProductCard extends StatelessWidget {
       builder: (context, child, model) {
         return GestureDetector(
           onTap: ()=>Navigator.push(context, MaterialPageRoute(
-            builder: (context)=>ProductDetiles(product: productmodel,)
+            builder: (context)=>null
           )),
           child: Directionality(
               textDirection: TextDirection.rtl,
@@ -82,12 +82,15 @@ class ProductCard extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    width: 100,
-                    height: 20,
+                    width: 110,
+                    height: 22,
                     alignment: Alignment.center,
                     padding: EdgeInsets.all(2),
                     child: Text(
+                      
                       'کد ${productmodel.product_barcode}',
+                      softWrap: true,
+                      overflow: TextOverflow.fade,
                       style: TextStyle(fontSize: 12),
                     ),
                   ),

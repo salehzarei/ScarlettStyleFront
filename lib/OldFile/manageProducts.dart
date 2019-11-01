@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:scarlettstayle/OldFile/manageProductBackDrop.dart';
+import 'package:scarlettstayle/models/productmodel.dart';
+import 'package:scarlettstayle/scoped/mainscoped.dart';
+import 'package:scarlettstayle/widgets/cardsForAdmin.dart';
 import 'package:scoped_model/scoped_model.dart';
-import './scoped/mainscoped.dart';
-import './utils/manageProductBackDrop.dart';
-import './models/productmodel.dart';
-import './utils/cardsForAdmin.dart';
+
 
 // https://github.com/mjohnsullivan/flutter-by-example/blob/master/16_panels/lib/complex_example.dart
 

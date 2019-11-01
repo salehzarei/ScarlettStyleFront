@@ -5,6 +5,8 @@ import './scoped/mainscoped.dart';
 import 'dart:io';
 import 'dart:async';
 
+import 'pages/productManage.dart';
+
 class Splash extends StatefulWidget {
   const Splash({Key key}) : super(key: key);
 
@@ -54,14 +56,14 @@ int time = 10 ;
     return SplashScreen(
       seconds: time,
       loadingText: Text(loadingText,style: TextStyle(color: Colors.white),),
-    //  navigateAfterSeconds: Home(),
+      navigateAfterSeconds: ProductManage(),
       title: Text(
         'اپلیکیشن اسکارلت',
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
       ),
       image: Image.asset('images/scarlett.png'),
       gradientBackground: LinearGradient(
-          colors: [Colors.cyan, Colors.pinkAccent],
+          colors: [Colors.pinkAccent.shade50, Colors.pinkAccent.shade700],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
       backgroundColor: Colors.white,

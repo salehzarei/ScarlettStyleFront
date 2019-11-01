@@ -5,10 +5,6 @@ import 'package:scarlettstayle/pages/productManage.dart';
 import 'package:scoped_model/scoped_model.dart';
 import './scoped/mainscoped.dart';
 import './splashScreen.dart';
-import './productdetiles.dart';
-import './basket.dart';
-import './manageCategorie.dart';
-import './manageProducts.dart';
 import 'pages/categoryManage.dart';
 
 void main() {
@@ -30,10 +26,8 @@ void main() {
           ),
           initialRoute: '/',
           routes: <String, WidgetBuilder>{
-            // '/': (context) => Splash(),
-            '/': (context) => ProductManage(),
-            '/productdetiles': (context) => ProductDetiles(),
-            '/basket': (context) => Basket(model: model),
+             '/': (context) => Splash(),
+          
             '/managecategories': (context) => CategoryManage(),
             '/manageproducts': (context) => ProductManage(),
             '/addnewProduct': (context) => AddNewProduct(),

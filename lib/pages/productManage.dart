@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:scarlettstayle/utils/cards.dart';
 import 'package:scarlettstayle/utils/menu.dart';
+import 'package:scarlettstayle/widgets/cards.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'dart:math' as math;
 import '../theme/textStyle.dart';
-import '../models/categoriesmodel.dart';
 import '../scoped/mainscoped.dart';
 
 class ProductManage extends StatefulWidget {

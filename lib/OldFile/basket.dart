@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:scarlettstayle/OldFile/buttonmenu.dart';
+import 'package:scarlettstayle/OldFile/productbasketcard.dart';
+import 'package:scarlettstayle/models/productmodel.dart';
+import 'package:scarlettstayle/scoped/mainscoped.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-
-import './scoped/mainscoped.dart';
-import './models/productmodel.dart';
-import './utils/buttonmenu.dart';
-import './utils/productbasketcard.dart';
 
 class Basket extends StatefulWidget {
   final MainModel model;

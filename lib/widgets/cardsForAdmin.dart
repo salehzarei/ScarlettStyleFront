@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/productmodel.dart';
-import '../productdetiles.dart';
+
 
 class CardsForProductsinAdmin extends StatelessWidget {
   final ProductModel productmodel;
@@ -13,9 +13,7 @@ class CardsForProductsinAdmin extends StatelessWidget {
       onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ProductDetiles(
-                    product: productmodel,
-                  ))),
+              builder: (context) => null)),
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Card(
