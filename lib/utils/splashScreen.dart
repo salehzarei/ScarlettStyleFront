@@ -64,7 +64,7 @@ int time = 10 ;
       ),
       image: Image.asset('images/scarlett.png'),
       gradientBackground: LinearGradient(
-          colors: [Colors.pinkAccent.shade50, Colors.pinkAccent.shade700],
+          colors: [Colors.pink.shade100, Colors.pinkAccent.shade700],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
       backgroundColor: Colors.white,

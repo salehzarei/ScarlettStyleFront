@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scarlettstayle/pages/addNewProduct.dart';
 import 'package:scarlettstayle/pages/productManage.dart';
+import 'package:scarlettstayle/pages/saleProducts.dart';
 import 'package:scarlettstayle/utils/splashScreen.dart';
 import 'package:scoped_model/scoped_model.dart';
 import './scoped/mainscoped.dart';
 import 'pages/categoryManage.dart';
 
 void main() {
- MainModel model = MainModel();
+  MainModel model = MainModel();
   runApp(
     ScopedModel<MainModel>(
         model: model,
@@ -26,7 +27,8 @@ void main() {
           ),
           initialRoute: '/',
           routes: <String, WidgetBuilder>{
-             '/': (context) => Splash(),
+            //  '/': (context) => Splash(),
+            '/': (context) => SaleProducts(),
             '/managecategories': (context) => CategoryManage(),
             '/manageproducts': (context) => ProductManage(),
             '/addnewProduct': (context) => AddNewProduct(),
