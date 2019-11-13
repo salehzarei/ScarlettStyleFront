@@ -60,6 +60,8 @@ flutter:
    - images/header.jpg
    - images/noimage.png
    - images/scarlett.png
+   - jsons/sampleCustomer.json
+   - jsons/sampleOrder.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

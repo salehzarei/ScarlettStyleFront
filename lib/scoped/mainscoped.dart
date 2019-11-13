@@ -7,6 +7,8 @@ import 'package:image/image.dart' as Img;
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:scarlettstayle/models/customermodel.dart';
+import 'package:scarlettstayle/models/ordermodel.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -21,6 +23,8 @@ class MainModel extends Model {
   List<CategoriesModel> categoriData = [];
   List<ProductModel> selectedProductData = [];
   List<ProductModel> productData = [];
+  List<CustomerModel> customers = [];
+  List<OrderModel> orders = [];
   Map<int, ProductModel> productcart = {};
   Map<String, String> categoriList = {};
   String barcode = '';
@@ -64,7 +68,7 @@ class MainModel extends Model {
             ),
           ),
           DialogButton(
-            onPressed: () => Navigator.pushNamed(context,'/manageproducts'),
+            onPressed: () => Navigator.pushNamed(context, '/manageproducts'),
             color: Colors.redAccent,
             child: Text(
               "لیست محصولات",
@@ -117,6 +121,32 @@ class MainModel extends Model {
     return categoriData;
   }
 
+  //---fetch All Customers From server---//
+  Future fetchCustomer() async {
+    customers.clear();
+    notifyListeners();
+    final response = await rootBundle.loadString('jsons/sampleCustomer.json');
+    customers = (json.decode(response) as List)
+        .map((i) => CustomerModel.customerJson(i))
+        .toList();
+
+    notifyListeners();
+    return null;
+  }
+
+  //---fetch All Orders From server---//
+  Future fetchOrders() async {
+    orders.clear();
+    notifyListeners();
+    final response = await rootBundle.loadString('jsons/sampleOrder.json');
+    orders = (json.decode(response) as List)
+        .map((i) => OrderModel.orderJson(i))
+        .toList();
+    print(orders[0].productList[1].product_name);
+    notifyListeners();
+    return null;
+  }
+
 //---fetch All Products From server---//
   Future fetchProducts() async {
     productData.clear();
@@ -132,7 +162,8 @@ class MainModel extends Model {
   }
 
   ///-- Add New Category -- ///
-  Future addNewCategories(CategoriesModel newCategorie , BuildContext context) async {
+  Future addNewCategories(
+      CategoriesModel newCategorie, BuildContext context) async {
     dataAdded = false;
     notifyListeners();
     // if Categori has Icon File

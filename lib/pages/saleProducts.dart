@@ -37,11 +37,14 @@ class _SaleProductsState extends State<SaleProducts> {
     );
   }
 
-  _onStepContinue(index, MainModel model) {
+  _onStepContinue(index, MainModel model) async {
 //// اگر در مرحله اول بود دستورات زیر رو انجام بده
     if (index == 0) {
-      if (_customerPhoneNumber.text != null) {
+      if (_customerPhoneNumber.text != null)  {
         print("number is" + _customerPhoneNumber.text);
+        
+      bool result =  await chekCustomerNumber(model, _customerPhoneNumber.text);
+       print(result);
         setState(() {
           _stepindex = 1;
         });
@@ -83,6 +86,24 @@ class _SaleProductsState extends State<SaleProducts> {
         }
         break;
     }
+  }
+
+  @override
+  void initState() {
+    MainModel model = ScopedModel.of(context);
+    super.initState();
+    model.fetchCustomer();
+    model.fetchOrders();
+  }
+
+  chekCustomerNumber(MainModel model, String phoneNumber)  {
+//بررسی کردن شماره موبایل مشتری
+bool findedNumber = false ;
+    model.customers.forEach((c) {
+      if (phoneNumber == c.customerPhone)
+        findedNumber = true;
+    });
+    return findedNumber;
   }
 
   @override

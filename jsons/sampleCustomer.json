@@ -1,0 +1,26 @@
+[
+    {
+        "customer_id": "1",
+        "customer_name": "صالح زارعی",
+        "customer_address": "مشهد، الهیه",
+        "customer_phone": "09154127181",
+        "customer_state": "true",
+        "customer_rank": "5"
+    },
+    {
+        "customer_id": "2",
+        "customer_name": "آزاده صادقی",
+        "customer_address": "مشهد، الهیه",
+        "customer_phone": "09155257181",
+        "customer_state": "true",
+        "customer_rank": "3"
+    },
+    {
+        "customer_id": "3",
+        "customer_name": "ریحانه نوروزی",
+        "customer_address": "مشهد، کوهسنگی",
+        "customer_phone": "09215204600",
+        "customer_state": "true",
+        "customer_rank": "2"
+    }
+]
