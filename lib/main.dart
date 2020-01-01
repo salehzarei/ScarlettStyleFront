@@ -27,8 +27,8 @@ void main() {
           ),
           initialRoute: '/',
           routes: <String, WidgetBuilder>{
-            //  '/': (context) => Splash(),
-            '/': (context) => SaleProducts(),
+            '/': (context) => Splash(),
+            '/saleproducts': (context) => SaleProducts(),
             '/managecategories': (context) => CategoryManage(),
             '/manageproducts': (context) => ProductManage(),
             '/addnewProduct': (context) => AddNewProduct(),

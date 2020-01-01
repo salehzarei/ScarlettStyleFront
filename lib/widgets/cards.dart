@@ -15,9 +15,7 @@ class ProductCard extends StatelessWidget {
     return ScopedModelDescendant<MainModel>(
       builder: (context, child, model) {
         return GestureDetector(
-          onTap: ()=>Navigator.push(context, MaterialPageRoute(
-            builder: (context)=>null
-          )),
+         
           child: Directionality(
               textDirection: TextDirection.rtl,
               child: Stack(

@@ -48,7 +48,7 @@ class _AddNewProductState extends State<AddNewProduct> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      ' ...ذخیره در سرور',
+                      ' ... ذخیره در سرور',
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     Spacer(),

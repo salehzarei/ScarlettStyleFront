@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scarlettstayle/models/productmodel.dart';
 import 'package:scarlettstayle/utils/menu.dart';
 import 'package:scarlettstayle/widgets/cards.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -12,13 +13,19 @@ class ProductManage extends StatefulWidget {
 }
 
 class _ProductManageState extends State<ProductManage> {
+  List<ProductModel> filterProduct = List();
+
   @override
   void initState() {
     super.initState();
 
     MainModel model = ScopedModel.of(context);
     model.fetchCategories();
-    model.fetchProducts();
+    model.fetchProducts().then((onValue) {
+      setState(() {
+        filterProduct = model.productData;
+      });
+    });
   }
 
   @override
@@ -59,7 +66,7 @@ class _ProductManageState extends State<ProductManage> {
               ),
             ),
             floatingActionButton: FloatingActionButton(
-              onPressed: ()=>Navigator.pushNamed(context, '/addnewProduct'),
+              onPressed: () => Navigator.pushNamed(context, '/addnewProduct'),
               backgroundColor: Colors.pinkAccent,
               child: Icon(Icons.add),
             ),
@@ -97,6 +104,17 @@ class _ProductManageState extends State<ProductManage> {
                               fontSize: 15, color: Colors.grey.shade500)),
                       maxLength: 28,
                       keyboardType: TextInputType.text,
+                      onChanged: (value) {
+                        // filter Products and make new list
+                        setState(() {
+                          filterProduct = model.productData
+                              .where((p) =>
+                                  p.product_barcode
+                                      .contains(value.toString()) ||
+                                  p.product_name.contains(value.toString()))
+                              .toList();
+                        });
+                      },
                     ),
                   ),
                 ],
@@ -111,7 +129,12 @@ class _ProductManageState extends State<ProductManage> {
               color: Colors.grey.shade500,
               onPressed: () {
                 model.scanBarcode().whenComplete(() {
-                  print(model.barcode);
+                  setState(() {
+                    filterProduct = model.productData
+                        .where((barcode) =>
+                            barcode.product_barcode.contains(model.barcode))
+                        .toList();
+                  });
                 });
               },
             ),
@@ -122,21 +145,40 @@ class _ProductManageState extends State<ProductManage> {
   }
 
   Widget productList(MainModel model, context) {
-    return model.isLoadingAllProduct
-        ? Center(
-            child: CircularProgressIndicator(),
-          )
-        : GridView.builder(
-            itemCount: model.productData.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 5.0 / 8.0,
-            ),
-            itemBuilder: (context, index) {
-              return ProductCard(
-                productmodel: model.productData[index],
-              );
-            },
-          );
+    if (!model.isLoadingAllProduct) {
+      return filterProduct.length != 0
+          ? GridView.builder(
+              itemCount: filterProduct.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 5.0 / 8.0,
+              ),
+              itemBuilder: (context, index) {
+                return ProductCard(
+                  productmodel: filterProduct[index],
+                );
+              },
+            )
+          : Center(
+              child: FlatButton(
+              child: Text(
+                "محصولی یافت نشد،\n جهت بازگشت ضربه بزنید",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.pink,
+                  fontSize: 18,
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  filterProduct = model.productData;
+                });
+              },
+            ));
+    } else {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
   }
 }

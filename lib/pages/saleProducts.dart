@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:scarlettstayle/functions/addToCart.dart';
 import 'package:scarlettstayle/models/customermodel.dart';
 import 'package:scarlettstayle/scoped/mainscoped.dart';
 import 'package:scarlettstayle/theme/textStyle.dart';
@@ -493,20 +494,7 @@ class _SaleProductsState extends State<SaleProducts> {
         title: Text('ثبت محصول',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
         isActive: _stepindex == 2 ? true : false,
-        content: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: GestureDetector(
-            onTap: () {},
-            child: CircleAvatar(
-              backgroundColor: Colors.pink,
-              child: Icon(
-                Icons.add_shopping_cart,
-                color: Colors.white,
-              ),
-              radius: 30,
-            ),
-          ),
-        ),
+        content: AddToCart(),
 
         // Container(
         //     decoration: BoxDecoration(
