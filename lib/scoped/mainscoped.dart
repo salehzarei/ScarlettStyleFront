@@ -15,6 +15,8 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'dart:convert';
 import 'package:async/async.dart';
 import 'package:path/path.dart';
+import 'package:dio/dio.dart';
+
 
 import '../models/categoriesmodel.dart';
 import '../models/productmodel.dart';
@@ -109,11 +111,14 @@ class MainModel extends Model {
 
 //---fetch All Categories From server---//
   Future fetchCategories() async {
+    Response response;
+    Dio dio = Dio();
     categoriData.clear();
     isLoadingCategories = true;
     notifyListeners();
-    final response = await http.get('https://shifon.ir/tmp/getcategories.php');
-    categoriData = (json.decode(response.body) as List)
+    // final response = await http.get('https://shifon.ir/tmp/getcategories.php');
+    response = await dio.get('https://shifon.ir/tmp/getcategories.php');
+    categoriData = (json.decode(response.data) as List)
         .map((i) => CategoriesModel.catjson(i))
         .toList();
     isLoadingCategories = false;
@@ -166,93 +171,61 @@ class MainModel extends Model {
       CategoriesModel newCategorie, BuildContext context) async {
     dataAdded = false;
     notifyListeners();
-    // if Categori has Icon File
-    // if (newCategoriImage != null) {
-    //   var stream =
-    //       http.ByteStream(DelegatingStream.typed(newCategoriImage.openRead()));
-    //   var length = await newCategoriImage.length();
-    //   var url = Uri.parse("https:/shifon.ir/tmp/addcategory.php");
-    //   var request = http.MultipartRequest("POST", url);
-    //   var multipartFile = http.MultipartFile("categorie_icon", stream, length,
-    //       filename: basename(newCategoriImage.path));
-    //   request.files.add(multipartFile);
-    //   request.fields['categoie_name'] = newCategorie.categorie_name;
-    //   request.fields['categorie_des'] = newCategorie.categorie_des;
-    //   request.fields['categorie_state'] = newCategorie.categorie_state;
-    //   await request.send().then((resopnse) {
-    //     if (resopnse.statusCode == 200) {
-    //       dataAdded = true;
-    //       notifyListeners();
-    //     } else {
-    //       print("Error to Upload Data:${resopnse.statusCode} ");
-    //     }
-    //   });
-    // }
-    // if categori has not Icon file . send empty image to data base
-
-    var url = Uri.parse("https://shifon.ir/tmp/addcategory.php");
-    var request = http.MultipartRequest("POST", url);
-    request.fields['categorie_name'] = newCategorie.categorie_name;
-    request.fields['categorie_des'] = newCategorie.categorie_des;
-    request.fields['categorie_icon'] = "noimage.png";
-    request.fields['categorie_state'] = newCategorie.categorie_state;
-    await request.send().then((resopnse) {
-      if (resopnse.statusCode == 200) {
-        print("Upload Data Ok");
-        dataAdded = true;
-        Navigator.pushNamed(context, '/');
-        notifyListeners();
-      } else {
-        print("Error to Upload Data:${resopnse.statusCode} ");
-      }
+    Response response;
+    Dio dio = Dio();
+    FormData formData = FormData.fromMap({
+      "categorie_name": newCategorie.categorie_name,
+      "categorie_des": newCategorie.categorie_des,
+      "categorie_icon": "noimage.png",
+      "categorie_state": newCategorie.categorie_state
     });
+
+    response =
+        await dio.post("https://shifon.ir/tmp/addcategory.php", data: formData);
+    if (response.statusCode == 200) {
+      print("Upload Data Ok");
+      dataAdded = true;
+      Navigator.pushNamed(context, '/');
+      notifyListeners();
+    } else {
+      print("Error to Upload Data:${response.statusCode} ");
+    }
 
     return dataAdded;
   }
 
 //// Add New Product ////
-  Future addNewProduct(ProductModel newProduct) async {
-    print(newProduct.product_barcode);
-    print(newProduct.product_name);
-    print(newProduct.product_category);
-    print(newProduct.product_price_buy);
-    print(newProduct.product_price_sell);
-    print(newProduct.product_count);
-    print(newProduct.product_size);
-    print(newProduct.product_des);
-    print(basename(productImageFile.path));
-    productAddedToServer = false;
-    notifyListeners();
-    if (productImageFile != null) {
-      var stream =
-          http.ByteStream(DelegatingStream.typed(productImageFile.openRead()));
-      var length = await productImageFile.length();
-      var url = Uri.parse("https://shifon.ir/tmp/addproducts.php");
-      var request = http.MultipartRequest("POST", url);
-      var multipartFile = http.MultipartFile("product_image", stream, length,
-          filename: basename(productImageFile.path));
-      request.files.add(multipartFile);
-      request.fields['product_name'] = newProduct.product_name;
-      request.fields['product_category'] = newProduct.product_category;
-      request.fields['product_des'] = newProduct.product_des;
-      request.fields['product_size'] = newProduct.product_size;
-      request.fields['product_barcode'] = newProduct.product_barcode;
-      request.fields['product_count'] = newProduct.product_count;
-      request.fields['product_price_buy'] = newProduct.product_price_buy;
-      request.fields['product_price_sell'] = newProduct.product_price_sell;
-      await request.send().then((resopnse) {
-        if (resopnse.statusCode == 200) {
+   Future addNewProduct(ProductModel newProduct) async {
+    Dio dio = Dio();
+    Response response;
+      FormData formData = FormData.fromMap({
+      "product_name": newProduct.product_name,
+      "product_category": newProduct.product_category,
+      "product_des": newProduct.product_des,
+      "product_size": newProduct.product_size,
+      "product_barcode": newProduct.product_barcode,
+      "product_count": newProduct.product_count,
+      "product_price_buy": newProduct.product_price_buy,
+      "product_price_sell": newProduct.product_price_sell,
+      "product_image": await MultipartFile.fromFile(productImageFile.path,filename:basename(productImageFile.path) )
+    });
+    response =
+        await dio.post("https://shifon.ir/tmp/addproducts.php", data: formData);
+        if (response.statusCode == 200) {
           productAddedToServer = true;
           productImageFile.writeAsStringSync('');
           notifyListeners();
         } else {
-          print("Error to Upload Data:${resopnse.statusCode} ");
+          print("Error to Upload Data:${response.statusCode} ");
           productAddedToServer = false;
           notifyListeners();
         }
-      });
-    }
   }
+
+
+
+
+
 
   Future<bool> checkProduct(BuildContext context) async {
     var response = await http.post('http://shifon.ir/tmp/checkproduct.php',

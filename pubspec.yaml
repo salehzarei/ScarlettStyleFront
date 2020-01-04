@@ -36,6 +36,7 @@ dependencies:
   flutter_spinkit: "^4.0.0"
   splashscreen: ^1.2.0
   flutter_barcode_scanner: ^0.1.7
+  dio: ^3.0.8  
   
  
  
