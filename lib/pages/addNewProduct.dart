@@ -34,30 +34,7 @@ class _AddNewProductState extends State<AddNewProduct> {
     );
   }
 
-  void showAlert(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-            backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            content: Container(
-              width: 50,
-              height: 80,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      ' ... ذخیره در سرور',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                    Spacer(),
-                    CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    )
-                  ]),
-            )));
-  }
+
 
   final FocusNode _productNameFocus = FocusNode();
   final FocusNode _productBuyPriceFocus = FocusNode();
@@ -200,19 +177,18 @@ class _AddNewProductState extends State<AddNewProduct> {
                               product_price_sell:
                                   _productSalePriceController.text.isEmpty
                                       ? '0'
-                                      : _productSalePriceController.numberValue.round()
+                                      : _productSalePriceController.numberValue
+                                          .round()
                                           .toString(),
                               product_price_buy:
                                   _productBuyPriceController.text.isEmpty
                                       ? '0'
-                                      : _productBuyPriceController.numberValue.round()
+                                      : _productBuyPriceController.numberValue
+                                          .round()
                                           .toString(),
                               product_size: _productSize.text,
                             );
                             checkProducts(context, newproduct, model);
-                           ! model.productAddedToServer
-                                ? showAlert(context)
-                                : Container();
                           },
                           child: Text(
                             'ثبت محصول',

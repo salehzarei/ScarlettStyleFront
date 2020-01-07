@@ -17,7 +17,7 @@ Future<void> checkProducts(
   if (product.product_count.isEmpty)
     errorMassages.add('موجودی محصول وارد نشده');
   if (product.product_size.isEmpty)
-    errorMassages.add('سایزبندری محصول وارد نشده');
+    errorMassages.add('سایزبندی محصول وارد نشده');
   if (model.productImageFile == null)
     errorMassages.add('عکس محصول انتخاب نشده');
 
@@ -54,9 +54,38 @@ Future<void> checkProducts(
           ),
         ));
   else {
+    showAlert(context);
     model.addNewProduct(product).whenComplete(() {
+       
       if (model.productAddedToServer)
-        model.successDialog(title: 'محصول با موفقیت ثبت شد', context: context);
+model.successDialog(title: 'محصول با موفقیت ثبت شد', context: context);
+      
+        
     });
   }
 }
+
+  void showAlert(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            content: Container(
+              width: 50,
+              height: 80,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      ' ... ذخیره در سرور',
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    Spacer(),
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  ]),
+            )));
+  }

@@ -13,11 +13,8 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'dart:convert';
-import 'package:async/async.dart';
 import 'package:path/path.dart';
 import 'package:dio/dio.dart';
-
-
 import '../models/categoriesmodel.dart';
 import '../models/productmodel.dart';
 
@@ -116,7 +113,6 @@ class MainModel extends Model {
     categoriData.clear();
     isLoadingCategories = true;
     notifyListeners();
-    // final response = await http.get('https://shifon.ir/tmp/getcategories.php');
     response = await dio.get('https://shifon.ir/tmp/getcategories.php');
     categoriData = (json.decode(response.data) as List)
         .map((i) => CategoriesModel.catjson(i))
@@ -195,10 +191,10 @@ class MainModel extends Model {
   }
 
 //// Add New Product ////
-   Future addNewProduct(ProductModel newProduct) async {
+  Future addNewProduct(ProductModel newProduct) async {
     Dio dio = Dio();
     Response response;
-      FormData formData = FormData.fromMap({
+    FormData formData = FormData.fromMap({
       "product_name": newProduct.product_name,
       "product_category": newProduct.product_category,
       "product_des": newProduct.product_des,
@@ -207,25 +203,21 @@ class MainModel extends Model {
       "product_count": newProduct.product_count,
       "product_price_buy": newProduct.product_price_buy,
       "product_price_sell": newProduct.product_price_sell,
-      "product_image": await MultipartFile.fromFile(productImageFile.path,filename:basename(productImageFile.path) )
+      "product_image": await MultipartFile.fromFile(productImageFile.path,
+          filename: basename(productImageFile.path))
     });
     response =
         await dio.post("https://shifon.ir/tmp/addproducts.php", data: formData);
-        if (response.statusCode == 200) {
-          productAddedToServer = true;
-          productImageFile.writeAsStringSync('');
-          notifyListeners();
-        } else {
-          print("Error to Upload Data:${response.statusCode} ");
-          productAddedToServer = false;
-          notifyListeners();
-        }
+    if (response.statusCode == 200) {
+      productAddedToServer = true;
+      productImageFile.writeAsStringSync('');
+      notifyListeners();
+    } else {
+      print("Error to Upload Data:${response.statusCode} ");
+      productAddedToServer = false;
+      notifyListeners();
+    }
   }
-
-
-
-
-
 
   Future<bool> checkProduct(BuildContext context) async {
     var response = await http.post('http://shifon.ir/tmp/checkproduct.php',
@@ -321,9 +313,9 @@ class MainModel extends Model {
     int rand = Math.Random().nextInt(10000);
     if (imageFile != null) {
       Img.Image image = Img.decodeImage(imageFile.readAsBytesSync());
-      Img.Image smallerImg = Img.copyResize(image, width: 500);
+      Img.Image smallerImg = Img.copyResize(image, width: 700);
       var compressImg = File("$path/categorie_image_$rand.jpg")
-        ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 95));
+        ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 100));
       productImageFile = compressImg;
 
       notifyListeners();
@@ -342,9 +334,9 @@ class MainModel extends Model {
     int rand = Math.Random().nextInt(10000);
     if (imageFile != null) {
       Img.Image image = Img.decodeImage(imageFile.readAsBytesSync());
-      Img.Image smallerImg = Img.copyResize(image, width: 500);
+      Img.Image smallerImg = Img.copyResize(image, width: 700);
       var compressImg = File("$path/categorie_image_$rand.jpg")
-        ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 95));
+        ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 100));
       productImageFile = compressImg;
 
       notifyListeners();
