@@ -14,18 +14,54 @@ class ProductManage extends StatefulWidget {
 
 class _ProductManageState extends State<ProductManage> {
   List<ProductModel> filterProduct = List();
-
+  List<Widget> chosesCatList = List();
   @override
   void initState() {
     super.initState();
 
     MainModel model = ScopedModel.of(context);
-    model.fetchCategories();
+
+    model.fetchCategories().whenComplete(() {
+      model.categoriList.forEach((f, index) {
+        print(index);
+        print(f);
+        print("object");
+      });
+    });
     model.fetchProducts().then((onValue) {
       setState(() {
         filterProduct = model.productData;
       });
     });
+  }
+
+// دایلوگ فیلتر
+  _showReportDialog() {
+    bool isSeletedCat = false;
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15)),
+            title: Text(
+              "دسته بندی محصولات",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15),
+            ),
+            content: Container(
+              padding: EdgeInsets.all(8.0),
+              child: ChoiceChip(
+                label: Text("data"),
+                selected: isSeletedCat,
+                onSelected: (selected) {
+                  setState(() {
+                    isSeletedCat = selected;
+                  });
+                },
+              ),
+            ),
+          );
+        });
   }
 
   @override
@@ -52,15 +88,29 @@ class _ProductManageState extends State<ProductManage> {
               child: ListView(
                 children: <Widget>[
                   searchBox(model),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 25),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height - 180,
-                      width: MediaQuery.of(context).size.width - 20,
-                      color: Colors.transparent,
-                      child: productList(model, context),
-                      alignment: Alignment.centerLeft,
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 2),
+                      child: FlatButton.icon(
+                        label: Text(
+                          "فیلتر",
+                          style: TextStyle(color: Colors.grey.shade700),
+                        ),
+                        onPressed: () => _showReportDialog(),
+                        icon: Icon(
+                          Icons.filter_list,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
                     ),
+                  ),
+                  Container(
+                    height: MediaQuery.of(context).size.height - 180,
+                    width: MediaQuery.of(context).size.width - 20,
+                    color: Colors.transparent,
+                    child: productList(model, context),
+                    alignment: Alignment.centerLeft,
                   )
                 ],
               ),

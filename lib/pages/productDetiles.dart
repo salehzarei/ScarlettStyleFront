@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:scarlettstayle/models/productmodel.dart';
+import 'package:scarlettstayle/pages/editProducts.dart';
 import 'package:scarlettstayle/utils/menu.dart';
 
 class ProductDetiles extends StatelessWidget {
@@ -82,7 +83,7 @@ class ProductDetiles extends StatelessWidget {
                         ),
                         Expanded(
                           flex: 2,
-                                                  child: Column(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               Row(
@@ -211,7 +212,12 @@ class ProductDetiles extends StatelessWidget {
                   top: fromTop + 25,
                   left: fromLeft,
                   child: FloatingActionButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditProducts(
+                                  product: product,
+                                ))),
                     child: Icon(
                       Icons.edit,
                       color: Colors.grey,
