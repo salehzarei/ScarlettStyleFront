@@ -276,7 +276,7 @@ class MainModel extends Model {
     return Alert(
         context: context,
         title: 'مطمعن هستید برای حذف ؟',
-        type: AlertType.success,
+        type: AlertType.warning,
         buttons: [
           DialogButton(
             onPressed: () async {
@@ -286,7 +286,43 @@ class MainModel extends Model {
               if (response.statusCode == 200) {
                 datadeleted = true;
                 notifyListeners();
-                Navigator.pushNamed(context, '/');
+                Navigator.pushNamed(context, '/managecategories');
+              }
+            },
+            child: Text(
+              "حذف میکنم",
+              style: TextStyle(color: Colors.white, fontSize: 15),
+            ),
+          ),
+          DialogButton(
+            onPressed: () => Navigator.pop(context),
+            color: Colors.redAccent,
+            child: Text(
+              "بیخیال شدم ",
+              style: TextStyle(color: Colors.white, fontSize: 15),
+            ),
+          )
+        ]).show();
+  }
+
+  // delete Categori with Picture file
+  Future deleteProduct(String id, String image, BuildContext context) async {
+    datadeleted = false;
+
+    return Alert(
+        context: context,
+        title: 'مطمعن هستید برای حذف ؟',
+        type: AlertType.warning,
+        buttons: [
+          DialogButton(
+            onPressed: () async {
+              var response = await http.post(
+                  "https://shifon.ir/tmp/deleteproduct.php",
+                  body: {'product_id': id , 'product_image':image});
+              if (response.statusCode == 200) {
+                datadeleted = true;
+                notifyListeners();
+                Navigator.pushNamed(context, '/manageproducts');
               }
             },
             child: Text(

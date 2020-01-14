@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:scarlettstayle/functions/chekProducts.dart';
 import 'package:scarlettstayle/models/productmodel.dart';
 import 'package:scarlettstayle/scoped/mainscoped.dart';
@@ -9,7 +11,7 @@ import 'package:scarlettstayle/utils/menu.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class EditProducts extends StatefulWidget {
-  ProductModel product;
+  final ProductModel product;
 
   EditProducts({Key key, this.product}) : super(key: key);
 
@@ -44,7 +46,6 @@ class _EditProductsState extends State<EditProducts> {
   TextEditingController _productDes = TextEditingController();
   List<DropdownMenuItem> _catListMenu = [];
   String _catSelectedID;
-  bool _isNoImage = true;
   bool _imageLoading = false;
   bool _catLoading = true;
 
@@ -62,7 +63,35 @@ class _EditProductsState extends State<EditProducts> {
   @override
   void initState() {
     super.initState();
+    _productCode.text = widget.product.product_barcode;
+    _productName.text = widget.product.product_name;
+    _productSalePriceController.text = widget.product.product_price_sell;
+    _productBuyPriceController.text = widget.product.product_price_buy;
+    _productCount.text = widget.product.product_count;
+    _productSize.text = widget.product.product_size;
+    _productDes.text = widget.product.product_des;
+    _catSelectedID = widget.product.product_category;
+
+    MainModel model = ScopedModel.of(context);
+    model.fetchCategories().whenComplete(() {
+      if (model.categoriData.length != 0) {
+        setState(() {
+          _catListMenu = model.categoriData.map((cat) {
+            return DropdownMenuItem(
+              value: cat.categorie_id,
+              child: Text(
+                cat.categorie_name,
+                style: fildInputText,
+              ),
+            );
+          }).toList();
+          _catLoading = false;
+        });
+      }
+    });
   }
+
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -122,9 +151,9 @@ class _EditProductsState extends State<EditProducts> {
                             : null,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: _isNoImage
-                                  ? AssetImage('images/noimage.png')
-                                  : FileImage(model.productImageFile),
+                              image: NetworkImage(
+                                  "https://shifon.ir/tmp/product_image/" +
+                                      widget.product.product_image),
                               fit: BoxFit.cover),
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -137,42 +166,59 @@ class _EditProductsState extends State<EditProducts> {
                   Padding(
                       padding: EdgeInsets.symmetric(
                         vertical: 18,
-                        horizontal: 60,
+                        horizontal: 30,
                       ),
                       child: Container(
-                        height: 40,
-                        child: RaisedButton(
-                          onPressed: () {
-                            ProductModel newproduct = ProductModel(
-                              product_barcode: _productCode.text,
-                              product_name: _productName.text,
-                              product_category: _catSelectedID,
-                              product_count: _productCount.text,
-                              product_des: _productDes.text,
-                              product_price_sell:
-                                  _productSalePriceController.text.isEmpty
-                                      ? '0'
-                                      : _productSalePriceController.numberValue
-                                          .round()
-                                          .toString(),
-                              product_price_buy:
-                                  _productBuyPriceController.text.isEmpty
-                                      ? '0'
-                                      : _productBuyPriceController.numberValue
-                                          .round()
-                                          .toString(),
-                              product_size: _productSize.text,
-                            );
-                            checkProducts(context, newproduct, model);
-                          },
-                          child: Text(
-                            'ثبت محصول',
-                            style: buttonText,
-                          ),
-                          color: Colors.pinkAccent,
-                          shape: StadiumBorder(),
-                        ),
-                      ))
+                          height: 40,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              RaisedButton(
+                                onPressed: () {
+                                  // ProductModel newproduct = ProductModel(
+                                  //   product_barcode: _productCode.text,
+                                  //   product_name: _productName.text,
+                                  //   product_category: _catSelectedID,
+                                  //   product_count: _productCount.text,
+                                  //   product_des: _productDes.text,
+                                  //   product_price_sell:
+                                  //       _productSalePriceController.text.isEmpty
+                                  //           ? '0'
+                                  //           : _productSalePriceController
+                                  //               .numberValue
+                                  //               .round()
+                                  //               .toString(),
+                                  //   product_price_buy:
+                                  //       _productBuyPriceController.text.isEmpty
+                                  //           ? '0'
+                                  //           : _productBuyPriceController
+                                  //               .numberValue
+                                  //               .round()
+                                  //               .toString(),
+                                  //   product_size: _productSize.text,
+                                  // );
+                                  // checkProducts(context, newproduct, model);
+                                },
+                                child: Text(
+                                  'ثبت تغییرات',
+                                  style: buttonText,
+                                ),
+                                color: Colors.greenAccent.shade700,
+                                shape: StadiumBorder(),
+                              ),
+                              RaisedButton(
+                                onPressed: () {
+                                  model.deleteProduct(widget.product.product_id, widget.product.product_image, context);
+                                },
+                                child: Text(
+                                  'حذف محصول',
+                                  style: buttonText,
+                                ),
+                                color: Colors.pinkAccent,
+                                shape: StadiumBorder(),
+                              ),
+                            ],
+                          )))
                 ],
               ),
             ),
@@ -212,10 +258,7 @@ class _EditProductsState extends State<EditProducts> {
                                   ' کمی صبر کنید ...',
                                   style: TextStyle(color: Colors.redAccent),
                                 )
-                              : Text(
-                                  ' انتخاب کنید',
-                                  textDirection: TextDirection.rtl,
-                                ),
+                              : Text(_catSelectedID),
                           onChanged: (newVal) {
                             setState(() {
                               _catSelectedID = newVal;
@@ -510,7 +553,6 @@ class _EditProductsState extends State<EditProducts> {
                       });
                       model.getImageCamera().whenComplete(() {
                         setState(() {
-                          _isNoImage = false;
                           _imageLoading = false;
                         });
                       });
@@ -530,7 +572,6 @@ class _EditProductsState extends State<EditProducts> {
                       });
                       model.getImageGallery().whenComplete(() {
                         setState(() {
-                          _isNoImage = false;
                           _imageLoading = false;
                         });
                       });
