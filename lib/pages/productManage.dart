@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:scarlettstayle/models/categoriesmodel.dart';
 import 'package:scarlettstayle/models/productmodel.dart';
+import 'package:scarlettstayle/pages/productDetiles.dart';
 import 'package:scarlettstayle/utils/menu.dart';
 import 'package:scarlettstayle/widgets/cards.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -15,23 +17,39 @@ class ProductManage extends StatefulWidget {
 class _ProductManageState extends State<ProductManage> {
   List<ProductModel> filterProduct = List();
   List<Widget> chosesCatList = List();
+  String _textAlarm = "محصولی یافت نشد،\n جهت بازگشت ضربه بزنید";
+  bool _noProduct = false;
   @override
   void initState() {
     super.initState();
 
     MainModel model = ScopedModel.of(context);
 
-    model.fetchCategories().whenComplete(() {
-      model.categoriList.forEach((f, index) {
-        print(index);
-        print(f);
-        print("object");
-      });
-    });
-    model.fetchProducts().then((onValue) {
-      setState(() {
-        filterProduct = model.productData;
-      });
+    model.fetchCategories().then((value) {
+      List<CategoriesModel> val = value;
+      if (val.isEmpty) {
+        setState(() {
+          _textAlarm =
+              'هنوز هیچ محصولی ثبت نشده \n ابتدا باید یک دسته بندی ایجاد کنید';
+          _noProduct = true;
+        });
+      } else {
+        model.categoriList.forEach((f, index) {
+          print(index);
+          print(f);
+          print("object");
+        });
+        model.fetchProducts().then((onValue) {
+          List<ProductModel> val = onValue;
+          if (val.isEmpty)
+            setState(() {
+              _textAlarm = 'هنوز هیچ محصولی ثبت نشده \n یک محصول جدید ثبت کنید';
+            });
+          setState(() {
+            filterProduct = model.productData;
+          });
+        });
+      }
     });
   }
 
@@ -42,7 +60,8 @@ class _ProductManageState extends State<ProductManage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             title: Text(
               "دسته بندی محصولات",
               textAlign: TextAlign.center,
@@ -116,7 +135,9 @@ class _ProductManageState extends State<ProductManage> {
               ),
             ),
             floatingActionButton: FloatingActionButton(
-              onPressed: () => Navigator.pushNamed(context, '/addnewProduct'),
+              onPressed: () => _noProduct
+                  ? Navigator.pushNamed(context, '/managecategories')
+                  : Navigator.pushNamed(context, '/addnewProduct'),
               backgroundColor: Colors.pinkAccent,
               child: Icon(Icons.add),
             ),
@@ -185,6 +206,14 @@ class _ProductManageState extends State<ProductManage> {
                             barcode.product_barcode.contains(model.barcode))
                         .toList();
                   });
+
+                  if (filterProduct.length == 1)
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProductDetiles(
+                                  product: filterProduct[0],
+                                )));
                 });
               },
             ),
@@ -212,7 +241,7 @@ class _ProductManageState extends State<ProductManage> {
           : Center(
               child: FlatButton(
               child: Text(
-                "محصولی یافت نشد،\n جهت بازگشت ضربه بزنید",
+                _textAlarm,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.pink,

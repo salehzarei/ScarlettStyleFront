@@ -106,6 +106,36 @@ class MainModel extends Model {
     }
   }
 
+  showProsses(BuildContext context) {
+    {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+              backgroundColor: Colors.black87.withOpacity(0.5),
+              elevation: 0.0,
+              content: Container(
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.height,
+                height: MediaQuery.of(context).size.width,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        ' ... یک لحظه صبر کنید',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      )
+                    ]),
+              )));
+    }
+  }
+
 //---fetch All Categories From server---//
   Future fetchCategories() async {
     Response response;
@@ -165,6 +195,7 @@ class MainModel extends Model {
   ///-- Add New Category -- ///
   Future addNewCategories(
       CategoriesModel newCategorie, BuildContext context) async {
+    showProsses(context);
     dataAdded = false;
     notifyListeners();
     Response response;
@@ -181,8 +212,8 @@ class MainModel extends Model {
     if (response.statusCode == 200) {
       print("Upload Data Ok");
       dataAdded = true;
-      Navigator.pushNamed(context, '/');
       notifyListeners();
+      Navigator.pushNamed(context, '/managecategories');
     } else {
       print("Error to Upload Data:${response.statusCode} ");
     }
@@ -191,7 +222,8 @@ class MainModel extends Model {
   }
 
 //// Add New Product ////
-  Future addNewProduct(ProductModel newProduct) async {
+  Future addNewProduct(ProductModel newProduct, BuildContext context) async {
+    
     Dio dio = Dio();
     Response response;
     FormData formData = FormData.fromMap({
@@ -235,37 +267,36 @@ class MainModel extends Model {
       return true;
   }
 
-  Future updateCategories(CategoriesModel newCategorie) async {
+  Future updateCategories(
+      CategoriesModel newCategorie, BuildContext context) async {
+    showProsses(context);
     print(newCategorie.categorie_id);
     print(newCategorie.categorie_name);
     print(newCategorie.categorie_des);
     print(newCategorie.categorie_state);
     print(newCategorie.categorie_icon);
+    Dio dio = Dio();
+    Response response;
     dataupdated = false;
     notifyListeners();
     if (newCategorie.categorie_icon == null) {
-      // var stream =
-      //     http.ByteStream(DelegatingStream.typed(newCategoriImage.openRead()));
-      // var length = await newCategoriImage.length();
-      var url = Uri.parse("https://shifon.ir/tmp/editcategory.php");
-      var request = http.MultipartRequest("POST", url);
-      // var multipartFile = http.MultipartFile("categorie_icon", stream, length,
-      //     filename: basename(newCategoriImage.path));
-      // request.files.add(multipartFile);
-      request.fields['categorie_id'] = newCategorie.categorie_id;
-      request.fields['categorie_name'] = newCategorie.categorie_name;
-      request.fields['categorie_des'] = newCategorie.categorie_des;
-      request.fields['categorie_state'] = newCategorie.categorie_state;
-
-      await request.send().then((resopnse) {
-        if (resopnse.statusCode == 200) {
-          print("Edit Data Ok");
-          dataupdated = true;
-          notifyListeners();
-        } else {
-          print("Error to Edit Data:${resopnse.statusCode} ");
-        }
+      FormData formData = FormData.fromMap({
+        "categorie_id": newCategorie.categorie_id,
+        "categorie_name": newCategorie.categorie_name,
+        "categorie_des": newCategorie.categorie_des,
+        "categorie_state": newCategorie.categorie_state,
       });
+      response = await dio.post("https://shifon.ir/tmp/editcategory.php",
+          data: formData);
+
+      if (response.statusCode == 200) {
+        print("Edit Data Ok");
+        dataupdated = true;
+        notifyListeners();
+        Navigator.pushNamed(context, '/managecategories');
+      } else {
+        print("Error to Edit Data:${response.statusCode} ");
+      }
     }
   }
 
@@ -280,6 +311,7 @@ class MainModel extends Model {
         buttons: [
           DialogButton(
             onPressed: () async {
+              showProsses(context);
               var response = await http.post(
                   "https://shifon.ir/tmp/deletecategory.php",
                   body: {'categorie_id': id});
@@ -316,9 +348,10 @@ class MainModel extends Model {
         buttons: [
           DialogButton(
             onPressed: () async {
+              showProsses(context);
               var response = await http.post(
                   "https://shifon.ir/tmp/deleteproduct.php",
-                  body: {'product_id': id , 'product_image':image});
+                  body: {'product_id': id, 'product_image': image});
               if (response.statusCode == 200) {
                 datadeleted = true;
                 notifyListeners();

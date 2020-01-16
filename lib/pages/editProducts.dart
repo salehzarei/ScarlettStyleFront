@@ -166,7 +166,7 @@ class _EditProductsState extends State<EditProducts> {
                   Padding(
                       padding: EdgeInsets.symmetric(
                         vertical: 18,
-                        horizontal: 30,
+                        horizontal: 10,
                       ),
                       child: Container(
                           height: 40,

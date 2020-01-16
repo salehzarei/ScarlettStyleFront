@@ -55,7 +55,7 @@ Future<void> checkProducts(
         ));
   else {
     showAlert(context);
-    model.addNewProduct(product).whenComplete(() {
+    model.addNewProduct(product, context).whenComplete(() {
        
       if (model.productAddedToServer)
 model.successDialog(title: 'محصول با موفقیت ثبت شد', context: context);

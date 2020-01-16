@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:scarlettstayle/pages/productManage.dart';
 import 'package:scarlettstayle/scoped/mainscoped.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'dart:io';
 import 'dart:async';
-
-
 
 class Splash extends StatefulWidget {
   const Splash({Key key}) : super(key: key);
@@ -16,50 +15,57 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-
-String loadingText = '' ;
-int time = 10 ;
+  String _loadingText = '';
+  int _time = 10;
+  bool _isInternet = true;
 
   @override
   void initState() {
     super.initState();
     MainModel model = ScopedModel.of(context);
-    model.fetchProducts().whenComplete((){
-      setState(() {
-           time = 0 ;
+    chekinternet().whenComplete(() {
+      if (_isInternet) {
+        model.fetchProducts().whenComplete(() {
+          setState(() {
+            _time = 0;
           });
+        });
+      } else {
+        SystemNavigator.pop();
+      }
     });
-   chekinternet();
   }
 
-
- Future<void> chekinternet() async {
-      try {
-        final result = await InternetAddress.lookup('shifon.ir');
-        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-          print('connected');
-          setState(() {
-           loadingText ='کمی صبر کنید' ;
-           time = 2 ;
-          });
-        }
-      } on SocketException catch (_) {
-        print('not connected');
+  Future<void> chekinternet() async {
+    try {
+      final result = await InternetAddress.lookup('shifon.ir');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('connected');
         setState(() {
-         loadingText =  'اینترنت گوشی وصل نیست'; 
-         time = 50;
+          _loadingText = 'کمی صبر کنید';
         });
       }
+    } on SocketException catch (_) {
+      print('not connected');
+      setState(() {
+        _loadingText = 'اینترنت گوشی وصل نیست';
+        _isInternet = false;
+        _time = 20;
+      });
     }
+  }
 
   @override
   Widget build(BuildContext context) {
     return SplashScreen(
-      seconds: time,
-      loadingText: Text(loadingText,style: TextStyle(color: Colors.white),),
+      seconds: _time,
+      loadingText: Text(
+        _loadingText,
+        style: TextStyle(color: Colors.white),
+      ),
       navigateAfterSeconds: ProductManage(),
       title: Text(
-        'اپلیکیشن اسکارلت',
+        'اپلیکیشن مزون ارکیده',
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
       ),
       image: Image.asset('images/scarlett.png'),

@@ -324,7 +324,7 @@ class _CategoryManageState extends State<CategoryManage> {
             categorie_id: catId,
             categorie_state: 'true');
 
-        model.updateCategories(newcategory).whenComplete(() {
+        model.updateCategories(newcategory , context).whenComplete(() {
           if (model.dataupdated)
             Navigator.pushNamed(context, '/managecategories');
         });
