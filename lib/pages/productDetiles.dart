@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:scarlettstayle/models/productmodel.dart';
 import 'package:scarlettstayle/pages/editProducts.dart';
 import 'package:scarlettstayle/scoped/mainscoped.dart';
@@ -34,14 +36,18 @@ class ProductDetiles extends StatelessWidget {
               height: MediaQuery.of(context).size.height,
               child: Stack(
                 children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.7,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: NetworkImage(
-                                'https://shifon.ir/tmp/product_image/${product.product_image}'),
-                            fit: BoxFit.cover)),
+                  CachedNetworkImage(
+                    imageUrl:
+                        'https://shifon.ir/tmp/product_image/${product.product_image}',
+                    placeholder: (context, url) => SpinKitFadingCube(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    imageBuilder: (context, imageProvider) => Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover)),
+                    ),
                   ),
                   Positioned(
                     bottom: 40,
@@ -66,7 +72,7 @@ class ProductDetiles extends StatelessWidget {
                                             fontSize: 15),
                                       ),
                                       Text(
-                                        "${model.fixPrice(product.product_price_sell)} تومان",
+                                        "${model.fixPrice(product.product_price_buy)} تومان",
                                         style: TextStyle(
                                             color: Colors.black54,
                                             fontSize: 18,

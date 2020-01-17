@@ -15,67 +15,79 @@ class ProductCard extends StatelessWidget {
     return ScopedModelDescendant<MainModel>(
       builder: (context, child, model) {
         return GestureDetector(
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ProductDetiles(product: productmodel,))),
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProductDetiles(
+                        product: productmodel,
+                      ))),
           child: Directionality(
               textDirection: TextDirection.rtl,
               child: Stack(
                 alignment: Alignment.topCenter,
                 children: <Widget>[
                   Positioned(
-                    top: 10,
-                    child: Container(
-                      height: 215,
-                      width: 150,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                                blurRadius: 5.0,
-                                color: Colors.grey.shade300,
-                                spreadRadius: 0.5,
-                                offset: Offset(0, 5))
-                          ],
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: CachedNetworkImageProvider(
-                                'https://shifon.ir/tmp/product_image/${productmodel.product_image}',
-                              ))),
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        height: 55,
-                        width: 150,
-                        alignment: Alignment.topCenter,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 5),
-                              child: Text(productmodel.product_des,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                      color: Colors.pink)),
+                      top: 10,
+                      child: CachedNetworkImage(
+                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                        imageUrl:
+                            'https://shifon.ir/tmp/product_image/${productmodel.product_image}',
+                        imageBuilder: (context, imageProvider) => Container(
+                          height: 215,
+                          width: 150,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                    blurRadius: 5.0,
+                                    color: Colors.grey.shade300,
+                                    spreadRadius: 0.5,
+                                    offset: Offset(0, 5))
+                              ],
+                              image: DecorationImage(
+                                  image: imageProvider, fit: BoxFit.cover)),
+                         
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            height: 55,
+                            width: 151,
+                            alignment: Alignment.topCenter,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(top: 5, left: 5),
+                                  child: Text(
+                                      productmodel.product_count +
+                                          " عدد - سایز " +
+                                          productmodel.product_size,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                          color: Colors.pink)),
+                                ),
+                                Text(productmodel.product_name,
+                                    overflow: TextOverflow.fade,
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 17,
+                                        color: Colors.grey.shade800)),
+                              ],
                             ),
-                            Text(productmodel.product_name,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 18,
-                                    color: Colors.grey.shade800)),
-                          ],
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.9),
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(15),
+                                  bottomRight: Radius.circular(15)),
+                            ),
+                          ),
                         ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(15),
-                              bottomRight: Radius.circular(15)),
-                        ),
-                      ),
-                    ),
-                  ),
+                      )),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -111,7 +123,7 @@ class ProductCard extends StatelessWidget {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 17)),
                             Text(
-                              'تومان',
+                              ' تومان ',
                               style: TextStyle(fontSize: 12),
                             ),
                           ],

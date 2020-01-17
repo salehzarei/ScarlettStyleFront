@@ -66,7 +66,9 @@ class _SplashState extends State<Splash> {
       navigateAfterSeconds: ProductManage(),
       title: Text(
         'اپلیکیشن مزون ارکیده',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.white),
       ),
       image: Image.asset('images/scarlett.png'),
       gradientBackground: LinearGradient(

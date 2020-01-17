@@ -15,10 +15,23 @@ class ProductManage extends StatefulWidget {
 }
 
 class _ProductManageState extends State<ProductManage> {
+  final GlobalKey<RefreshIndicatorState> _refreshKey =
+      GlobalKey<RefreshIndicatorState>();
+
+  Future<Null> _onRefresh(model) async {
+    await Future.delayed(Duration(milliseconds: 700));
+    _refreshKey.currentState.show();
+    setState(() {
+      productList(model, context);
+    });
+    return null;
+  }
+
   List<ProductModel> filterProduct = List();
   List<Widget> chosesCatList = List();
-  String _textAlarm = "محصولی یافت نشد،\n جهت بازگشت ضربه بزنید";
+  String _textAlarm = "";
   bool _noProduct = false;
+
   @override
   void initState() {
     super.initState();
@@ -90,6 +103,7 @@ class _ProductManageState extends State<ProductManage> {
         return Directionality(
           textDirection: TextDirection.rtl,
           child: Scaffold(
+            resizeToAvoidBottomInset: false,
             backgroundColor: Colors.grey.shade100,
             appBar: AppBar(
               backgroundColor: Colors.transparent,
@@ -103,35 +117,38 @@ class _ProductManageState extends State<ProductManage> {
             ),
             drawer: Menu(),
             body: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 13),
-              child: ListView(
-                children: <Widget>[
-                  searchBox(model),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 2),
-                      child: FlatButton.icon(
-                        label: Text(
-                          "فیلتر",
-                          style: TextStyle(color: Colors.grey.shade700),
-                        ),
-                        onPressed: () => _showReportDialog(),
-                        icon: Icon(
-                          Icons.filter_list,
-                          color: Colors.grey.shade700,
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 13),
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  children: <Widget>[
+                    searchBox(model),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 2),
+                        child: FlatButton.icon(
+                          label: Text(
+                            "فیلتر",
+                            style: TextStyle(color: Colors.grey.shade700),
+                          ),
+                          onPressed: () => _showReportDialog(),
+                          icon: Icon(
+                            Icons.filter_list,
+                            color: Colors.grey.shade700,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height - 180,
-                    width: MediaQuery.of(context).size.width - 20,
-                    color: Colors.transparent,
-                    child: productList(model, context),
-                    alignment: Alignment.centerLeft,
-                  )
-                ],
+                    Container(
+                      height: MediaQuery.of(context).size.height - 200,
+                      width: MediaQuery.of(context).size.width - 20,
+                      color: Colors.transparent,
+                      child: productList(model, context),
+                      alignment: Alignment.centerLeft,
+                    )
+                  ],
+                ),
               ),
             ),
             floatingActionButton: FloatingActionButton(
@@ -226,17 +243,21 @@ class _ProductManageState extends State<ProductManage> {
   Widget productList(MainModel model, context) {
     if (!model.isLoadingAllProduct) {
       return filterProduct.length != 0
-          ? GridView.builder(
-              itemCount: filterProduct.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 5.0 / 8.0,
+          ? RefreshIndicator(
+              child: GridView.builder(
+                itemCount: filterProduct.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 5.0 / 8.0,
+                ),
+                itemBuilder: (context, index) {
+                  return ProductCard(
+                    productmodel: filterProduct[index],
+                  );
+                },
               ),
-              itemBuilder: (context, index) {
-                return ProductCard(
-                  productmodel: filterProduct[index],
-                );
-              },
+              onRefresh: () => _onRefresh(model),
+              key: _refreshKey,
             )
           : Center(
               child: FlatButton(

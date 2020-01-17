@@ -383,7 +383,7 @@ class MainModel extends Model {
     if (imageFile != null) {
       Img.Image image = Img.decodeImage(imageFile.readAsBytesSync());
       Img.Image smallerImg = Img.copyResize(image, width: 700);
-      var compressImg = File("$path/categorie_image_$rand.jpg")
+      var compressImg = File("$path/product_image_$rand.jpg")
         ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 100));
       productImageFile = compressImg;
 
@@ -404,7 +404,7 @@ class MainModel extends Model {
     if (imageFile != null) {
       Img.Image image = Img.decodeImage(imageFile.readAsBytesSync());
       Img.Image smallerImg = Img.copyResize(image, width: 700);
-      var compressImg = File("$path/categorie_image_$rand.jpg")
+      var compressImg = File("$path/product_image_$rand.jpg")
         ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 100));
       productImageFile = compressImg;
 
